@@ -1,2 +1,2 @@
-# rfuzzylogic
+# rustylogic
 rusty version of eFLL
