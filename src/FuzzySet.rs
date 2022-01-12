@@ -8,7 +8,7 @@ pub struct FuzzySet{
 }
 
 impl FuzzySet {
-    fn new(&mut self, a: f64, b: f64, c: f64, d: f64) -> FuzzySet {
+    fn new(a: f64, b: f64, c: f64, d: f64) -> FuzzySet {
         FuzzySet{
             a,b,c,d,pertinence:0.0
         }
@@ -103,4 +103,19 @@ impl FuzzySet {
         self.pertinence = 0.0;
     }
 } 
+
+#[cfg(test)]
+mod tests {
+    // Note this useful idiom: importing names from outer (for mod tests) scope.
+    use super::*;
+
+    #[test]
+    fn test_new() {
+        let fuzzySet:FuzzySet =  FuzzySet::new(0.0, 10.0, 20.0, 30.0);
+        assert_eq!(fuzzySet.getPointA(), 0.0);
+        assert_eq!(fuzzySet.getPointB(), 10.0);
+        assert_eq!(fuzzySet.getPointC(), 20.0);
+        assert_eq!(fuzzySet.getPointD(), 30.0);
+    }
+}
 
