@@ -1,4 +1,5 @@
 #[allow(non_snake_case)]
+#[derive(Debug)]
 pub struct FuzzySet{
     a: f64,
     b: f64,
@@ -8,7 +9,7 @@ pub struct FuzzySet{
 }
 
 impl FuzzySet {
-    fn new(a: f64, b: f64, c: f64, d: f64) -> FuzzySet {
+    pub fn new(a: f64, b: f64, c: f64, d: f64) -> FuzzySet {
         FuzzySet{
             a,b,c,d,pertinence:0.0
         }
@@ -110,7 +111,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_new() {
+    pub fn test_new() {
         let fuzzySet:FuzzySet =  FuzzySet::new(0.0, 10.0, 20.0, 30.0);
         assert_eq!(fuzzySet.getPointA(), 0.0);
         assert_eq!(fuzzySet.getPointB(), 10.0);
