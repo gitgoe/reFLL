@@ -117,5 +117,38 @@ mod tests {
         assert_eq!(fuzzySet.getPointC(), 20.0);
         assert_eq!(fuzzySet.getPointD(), 30.0);
     }
+
+    #[test]
+    fn test_calculateAndGetPertinence(){
+
+        let mut fuzzySet1:FuzzySet =  FuzzySet::new(0.0, 10.0, 10.0, 20.0);
+
+        fuzzySet1.calculatePertinence(-5.0);
+        assert_eq!(fuzzySet1.getPertinence(), 0.0);
+
+        fuzzySet1.calculatePertinence(5.0);
+        assert_eq!(fuzzySet1.getPertinence(), 0.5);
+
+        fuzzySet1.calculatePertinence(10.0);
+        assert_eq!(fuzzySet1.getPertinence(), 1.0);
+
+        fuzzySet1.calculatePertinence(15.0);
+        assert_eq!(fuzzySet1.getPertinence(), 0.5);
+
+        fuzzySet1.calculatePertinence(25.0);
+        assert_eq!(fuzzySet1.getPertinence(), 0.0); 
+
+        let mut fuzzySet2:FuzzySet =  FuzzySet::new(0.0, 0.0, 20.0, 30.0);
+
+        fuzzySet2.calculatePertinence(-5.0);
+        assert_eq!(fuzzySet2.getPertinence(), 1.0);
+
+        let mut fuzzySet3:FuzzySet =  FuzzySet::new(0.0, 10.0, 20.0, 20.0);
+
+        fuzzySet3.calculatePertinence(25.0);
+        assert_eq!(fuzzySet3.getPertinence(), 1.0);
+    }
+
+    
 }
 
