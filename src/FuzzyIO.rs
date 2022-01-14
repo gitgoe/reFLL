@@ -40,9 +40,23 @@ impl FuzzyIO {
         return self.fuzzySetArray.borrow_mut().len()
     }
 
+    pub fn fuzzySet(&self, pos: usize) -> FuzzySet {
+        let array =  &*self.fuzzySetArray.borrow();
+        return array[pos];
+    }
+
     pub fn cleanFuzzySets(&self) -> usize {
         self.fuzzySetArray.borrow_mut().clear();
         return self.fuzzySetArray.borrow().len();
+    }
+
+    pub fn calculateFuzzySetPertinences(& self, crispValue: f64) {
+        let borrow = &mut *self.fuzzySetArray.borrow_mut();
+        for fs in borrow {
+            fs.calculatePertinence(crispValue);
+            println!("calculate: {:?}", fs);
+        }
+
     }
 }
 

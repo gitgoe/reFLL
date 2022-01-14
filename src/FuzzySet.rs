@@ -1,5 +1,5 @@
 #[allow(non_snake_case)]
-#[derive(Debug)]
+#[derive(Debug,Copy, Clone)]
 pub struct FuzzySet{
     a: f64,
     b: f64,
@@ -36,7 +36,7 @@ impl FuzzySet {
     }
 
     // Method to set the value of pertinence
-    fn setPertinence(& mut self, pertinence: f64) {
+    pub fn setPertinence(& mut self, pertinence: f64) {
         self.pertinence= pertinence;
         // check if the new pertinence is bigger then the current value because it can be called more then once by different FuzzyRuleConsequent
         if self.pertinence < pertinence {
@@ -45,12 +45,12 @@ impl FuzzySet {
     }
 
     // Method to get the value of pertinence
-    fn getPertinence(&self) -> f64 {
+    pub fn getPertinence(&self) -> f64 {
         self.pertinence
     }
 
     // Method to calculate the pertinence of the FuzzySet, according with the crispValue
-    fn calculatePertinence(& mut self, crispValue: f64)-> bool {
+    pub fn calculatePertinence(& mut self, crispValue: f64)-> bool {
         // check the crispValue is small then A
         if crispValue < self.a {
             // check if this FuzzySet represents "everithing small is true"

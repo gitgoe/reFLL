@@ -1,9 +1,12 @@
 use crate::FuzzyIO::FuzzyIO;
+use std::ops::DerefMut;
+use std::ops::Deref;
+
 
 #[allow(non_snake_case)]
 pub struct FuzzyInput{
     index: i64,
-    fuzzyIO: FuzzyIO
+    pub fuzzyIO: FuzzyIO
 }
 
 impl FuzzyInput {
@@ -14,23 +17,57 @@ impl FuzzyInput {
         }
     }
     // Method to calculate the pertinence of all FuzzySet
-    fn calculateFuzzySetPertinences(& self, crispValue: f64)-> bool {
-
-        let borrow = &mut *self.fuzzyIO.fuzzySetArray.borrow_mut();
-        for val in borrow {
-            println!("Got: {:?}", val);
-        }
-        
-        /*
-        // auxiliary variable to handle the operation
-        fuzzySetArray *aux = this->fuzzySets;
-        // while not in the end of the array, iterate
-        while (aux != NULL)
-        {
-            // call calculatePertinence for each FuzzySet
-            aux->fuzzySet->calculatePertinence(this->crispInput);
-            aux = aux->next;
-        }*/
+    fn calculateFuzzySetPertinences(& self)-> bool {
+        // call calculatePertinence for each FuzzySet
+        let crispInput = self.fuzzyIO.getCrispInput();
+        self.fuzzyIO.calculateFuzzySetPertinences(crispInput);
         return true;
+    }
+}
+impl Deref for FuzzyInput {
+    type Target = FuzzyIO;
+    fn deref(&self) -> &FuzzyIO { &self.fuzzyIO }
+}
+
+impl DerefMut for FuzzyInput {
+    fn deref_mut(&mut self) -> &mut FuzzyIO { &mut self.fuzzyIO }
+}
+
+#[cfg(test)]
+mod tests {
+    // Note this useful idiom: importing names from outer (for mod tests) scope.
+    use super::*;
+    use crate::FuzzySet::FuzzySet;
+
+    #[test]
+    fn test_addFuzzySet() {
+        let mut fuzzyInput:FuzzyInput =  FuzzyInput::new(1);
+        let fuzzySet:FuzzySet =  FuzzySet::new(0.0, 10.0, 10.0, 20.0);
+        assert_eq!(fuzzyInput.addFuzzySet(fuzzySet), 1);
+    }
+
+    #[test]
+    fn test_setCrispInputAndGetCrispInput() {
+        let mut fuzzyInput:FuzzyInput =  FuzzyInput::new(1);
+        fuzzyInput.setCrispInput(10.190);
+        assert_eq!(fuzzyInput.getCrispInput(), 10.190);
+    }
+
+    #[test]
+    fn test_calculateFuzzySetPertinences() {
+        
+        let mut fuzzyInput:FuzzyInput =  FuzzyInput::new(1);
+
+        let fuzzySet1:FuzzySet =  FuzzySet::new(0.0, 10.0, 10.0, 20.0);
+        fuzzyInput.addFuzzySet(fuzzySet1);
+
+        let fuzzySet2:FuzzySet =  FuzzySet::new(10.0, 20.0, 20.0, 30.0);
+        fuzzyInput.addFuzzySet(fuzzySet2);
+
+        fuzzyInput.setCrispInput(5.0);
+
+        fuzzyInput.calculateFuzzySetPertinences();
+        assert_eq!(fuzzyInput.fuzzySet(0).getPertinence(), 0.5);
+        assert_eq!(fuzzyInput.fuzzySet(1).getPertinence(), 0.0);
     }
 }
