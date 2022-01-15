@@ -65,7 +65,7 @@ mod tests {
         fuzzyInput.addFuzzySet(fuzzySet2);
 
         fuzzyInput.setCrispInput(5.0);
-
+        
         fuzzyInput.calculateFuzzySetPertinences();
         assert_eq!(fuzzyInput.fuzzySet(0).getPertinence(), 0.5);
         assert_eq!(fuzzyInput.fuzzySet(1).getPertinence(), 0.0);
