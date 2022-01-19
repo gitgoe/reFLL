@@ -42,6 +42,20 @@ impl FuzzyComposition{
 
     // Method to iterate over the pointsArray, detect possible intersections and sent these points for "correction"
     pub fn build(&self) -> bool{
+        /*
+        for x in (0..100).rev() {
+            println!("{}", x);
+        }
+        */
+        loop {
+            match self.points.next() {
+                Some(point) => {
+                    if point == 
+                    } 
+                }
+                None => break
+            }
+        }
         true
     }
 
@@ -87,6 +101,13 @@ impl FuzzyComposition{
         if mua <= 0.0 || mua >= 1.0 || mub <= 0.0 || mub >= 1.0 {
             // return false for intersection
             return false;
+        } else {
+            // we found an intersection
+            // calculate the point (y) and its pertinence (y) for the new element (pointsArray)
+            let point = x1 + mua * (x2 - x1);
+            let pertinence = y1 + mua * (y2 - y1);
+
+            let aux = PointArray{point, pertinence};
         }
         
         true
@@ -98,7 +119,7 @@ impl FuzzyComposition{
 
     pub fn empty(&mut self) -> bool{
         self.points.clear();
-        true
+        self.points.is_empty()
     }
 
     pub fn countPoints(&self) -> usize {
@@ -113,6 +134,46 @@ impl FuzzyComposition{
         if let Some(index) = self.points.iter().position(|p| *p == point) {
             self.points.swap_remove(index);
         }
+
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    // Note this useful idiom: importing names from outer (for mod tests) scope.
+    use super::*;
+
+    #[test]
+    pub fn test_new() {
+        let mut fuzzyComposition:FuzzyComposition =  FuzzyComposition::new();
+
+        assert_eq!(fuzzyComposition.addPoint(1.0, 0.1), true);
+        assert_eq!(fuzzyComposition.checkPoint(1.0, 0.1), true);
+        
+        assert_eq!(fuzzyComposition.addPoint(5.0, 0.5), true);
+        assert_eq!(fuzzyComposition.checkPoint(5.0, 0.5), true);
+
+        assert_eq!(fuzzyComposition.addPoint(9.0, 0.9), true);
+        assert_eq!(fuzzyComposition.checkPoint(9.0, 0.9), true);
+        
+        assert_eq!(fuzzyComposition.checkPoint(5.0, 0.1), false);
+
+    }
+
+    #[test]
+    pub fn test_build() {
+        let mut fuzzyComposition:FuzzyComposition =  FuzzyComposition::new();
+
+        fuzzyComposition.addPoint(0.0, 0.0);
+        fuzzyComposition.addPoint(10.0, 1.0);
+        fuzzyComposition.addPoint(20.0, 0.0);
+
+        fuzzyComposition.addPoint(10.0, 0.0);
+        fuzzyComposition.addPoint(20.0, 1.0);
+        fuzzyComposition.addPoint(30.0, 0.0);
+
+        
+        assert_eq!(fuzzyComposition.build(), true);
 
     }
 }
