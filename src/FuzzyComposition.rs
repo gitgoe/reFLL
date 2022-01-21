@@ -1,16 +1,19 @@
 
-extern crate array_tool;
-
-use array_tool::vec::*;
-
 const EPSILON_VALUE: f32 = 1.0E-3;
 
 #[allow(non_snake_case)]
-#[derive(Debug)]
-struct PointArray{ 
+#[derive(Debug,Copy,Clone)]
+pub struct PointArray{ 
     point: f32,
     pertinence: f32,
 }
+
+impl PointArray {
+    fn is_previous_greater(&self, next: &PointArray) -> bool {
+        self.point> next.point
+    }
+}
+
 impl PartialEq for PointArray{
     fn eq(&self, other: &Self) -> bool {
         self.point == other.point && self.pertinence == other.pertinence
@@ -18,8 +21,9 @@ impl PartialEq for PointArray{
 }
 
 #[allow(non_snake_case)]
-struct FuzzyComposition{
-    points : Vec<PointArray>,
+#[derive(Debug, Clone)]
+pub struct FuzzyComposition{
+    points : Vec<PointArray>
 }
 impl FuzzyComposition{
 
@@ -42,20 +46,24 @@ impl FuzzyComposition{
 
     // Method to iterate over the pointsArray, detect possible intersections and sent these points for "correction"
     pub fn build(&self) -> bool{
-        /*
-        for x in (0..100).rev() {
-            println!("{}", x);
-        }
-        */
-        loop {
-            match self.points.next() {
-                Some(point) => {
-                    if point == 
-                    } 
+        let mut previous: Option<PointArray> = None;
+        let mut is_greater = false;
+        for current in self.points.clone().into_iter() {
+            match previous {
+                Some(p) => {
+                    // if the previous point is greater then the current
+                    is_greater = p.is_previous_greater(&current);
+                    // if yes, break an use this point
+                    if is_greater {
+                        println!("previus {:?} is greater then {:?}", p, current);
+                        break;
+                    }
                 }
-                None => break
+                None => {}
             }
+            previous = Some(current);
         }
+        println!("found greater {:?}", previous);
         true
     }
 
