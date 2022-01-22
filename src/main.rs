@@ -1,12 +1,11 @@
-
-mod fuzzyComposition;
-
-use fuzzyComposition::*;
-
+ mod fuzzyComposition;
+ mod fuzzySet;
+ mod fuzzyInput;
+ mod fuzzyIO;
 
 fn main() {
     println!("Hello, world!");
-
+/*
     let mut fuzzyComposition:FuzzyComposition =  FuzzyComposition::new();
 
     fuzzyComposition.addPoint(0.0, 0.0);
@@ -18,5 +17,6 @@ fn main() {
     fuzzyComposition.addPoint(30.0, 0.0);
     
     fuzzyComposition.build();
+*/
 
 }

@@ -1,6 +1,7 @@
-use crate::FuzzyIO::FuzzyIO;
+
 use std::ops::DerefMut;
 use std::ops::Deref;
+use crate::fuzzyIO::FuzzyIO;
 
 
 #[allow(non_snake_case)]
@@ -37,7 +38,7 @@ impl DerefMut for FuzzyInput {
 mod tests {
     // Note this useful idiom: importing names from outer (for mod tests) scope.
     use super::*;
-    use crate::FuzzySet::FuzzySet;
+    use crate::fuzzySet::FuzzySet;
 
     #[test]
     fn test_addFuzzySet() {

@@ -1,7 +1,7 @@
 use std::rc::Rc;
 use std::cell::RefCell;
 
-use crate::FuzzySet::FuzzySet;
+use crate::fuzzySet::FuzzySet;
 
 #[allow(non_snake_case)]
 pub struct FuzzyIO{

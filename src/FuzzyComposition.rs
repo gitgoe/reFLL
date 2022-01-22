@@ -1,4 +1,8 @@
 
+extern crate iterslide;
+
+use iterslide::SlideIterator;
+
 const EPSILON_VALUE: f32 = 1.0E-3;
 
 #[allow(non_snake_case)]
@@ -45,7 +49,7 @@ impl FuzzyComposition{
     }
 
     // Method to iterate over the pointsArray, detect possible intersections and sent these points for "correction"
-    pub fn build(&self) -> bool{
+    pub fn build(&mut self) -> bool{
         let mut previous: Option<PointArray> = None;
         let mut is_greater = false;
         for current in self.points.clone().into_iter() {
@@ -63,12 +67,35 @@ impl FuzzyComposition{
             }
             previous = Some(current);
         }
-        println!("found greater {:?}", previous);
+        // find the indexof the previus
+        let index = self.points.iter().position(|&r| r == previous.unwrap()).unwrap();
+
+        println!("found greater {:?} at index {:?}", previous, index);
+        
+        // search the rigth windows that contains the previeus at index 1 to get the 4 tuple<_,_,_,_>
+        for window in self.points.clone().into_iter().slide(4) {  
+            if previous.as_ref() == window.get(1) {
+                println!("{:?}", window);
+                let aSegmentBegin = *window.get(0).unwrap();
+                let aSegmentEnd = *window.get(1).unwrap();
+                let bSegmentBegin = *window.get(2).unwrap();
+                let bSegmentEnd = *window.get(3).unwrap();
+                // insert the fixed point
+                if let Some(fixedPoint) = self.rebuild(aSegmentBegin, aSegmentEnd, bSegmentBegin, bSegmentEnd){
+                    self.points.insert(index,fixedPoint);
+                    // delete curent et previus pointsArray
+                    self.rmvPoint(aSegmentEnd);
+                    self.rmvPoint(bSegmentBegin);
+                }
+
+            }       
+        }
+          
         true
     }
 
     // Method to search intersection between two segments, if found, create a new pointsArray (in found intersection) and remove not necessary ones
-    pub fn rebuild(&self,  aSegmentBegin: PointArray, aSegmentEnd: PointArray, bSegmentBegin: PointArray, bSegmentEnd: PointArray) -> bool{
+    pub fn rebuild(&self,  aSegmentBegin: PointArray, aSegmentEnd: PointArray, bSegmentBegin: PointArray, bSegmentEnd: PointArray) -> Option<PointArray>{
         
         // create a reference for each point
         let x1 = aSegmentBegin.point;
@@ -92,7 +119,7 @@ impl FuzzyComposition{
         // If the denominator is zero or close to it, it means that the lines are parallels, so return false for intersection
         if denom < EPSILON_VALUE {
             // return false for intersection
-            return false;
+            return None;
         }
         // if negative, convert to positive
         if numera < 0.0 {
@@ -108,17 +135,18 @@ impl FuzzyComposition{
 
         if mua <= 0.0 || mua >= 1.0 || mub <= 0.0 || mub >= 1.0 {
             // return false for intersection
-            return false;
+            return None;
         } else {
             // we found an intersection
             // calculate the point (y) and its pertinence (y) for the new element (pointsArray)
             let point = x1 + mua * (x2 - x1);
             let pertinence = y1 + mua * (y2 - y1);
 
-            let aux = PointArray{point, pertinence};
+            let aux = Some(PointArray{point, pertinence});
+            println!("found an intersection calculate new point: {:?}", aux);
+            return aux;
         }
         
-        true
     }
 
     pub fn calculate(&self) -> f32{
@@ -180,8 +208,32 @@ mod tests {
         fuzzyComposition.addPoint(20.0, 1.0);
         fuzzyComposition.addPoint(30.0, 0.0);
 
-        
         assert_eq!(fuzzyComposition.build(), true);
+
+        assert_eq!(fuzzyComposition.checkPoint(0.0, 0.0), true);
+        assert_eq!(fuzzyComposition.checkPoint(10.0, 1.0), true);
+        assert_eq!(fuzzyComposition.checkPoint(20.0, 0.0), false);
+        assert_eq!(fuzzyComposition.checkPoint(15.0, 0.5), true);
+        assert_eq!(fuzzyComposition.checkPoint(10.0, 0.0), false);
+        assert_eq!(fuzzyComposition.checkPoint(20.0, 1.0), true);
+        assert_eq!(fuzzyComposition.checkPoint(30.0, 0.0), true);
+        assert_eq!(fuzzyComposition.countPoints(), 5);
+    }
+
+    #[test]
+    pub fn test_rebuild() {
+        
+        let mut fuzzyComposition:FuzzyComposition =  FuzzyComposition::new();
+
+        fuzzyComposition.addPoint(25.0, 0.0);
+        fuzzyComposition.addPoint(25.0, 1.0);
+        fuzzyComposition.addPoint(25.0, 0.0);
+
+        assert_eq!(fuzzyComposition.build(), true);
+        assert_eq!(fuzzyComposition.countPoints(), 3);
+        //assert_eq!(fuzzyComposition.calculate(), 3);
+         //assert_eq!(fuzzyComposition.empty(), true);
+
 
     }
 }
