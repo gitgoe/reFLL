@@ -160,7 +160,7 @@ impl FuzzyComposition{
         let mut numerator = 0.0;
         let mut denominator = 0.0;
         
-        for ( current, next) in self.points.clone().into_iter().tuples::<(_, _)>() {
+        for ( current, next) in self.points.clone().into_iter().tuple_windows() {
 
             println!("current:{:?} -- next:{:?}", current, next);
 
@@ -209,6 +209,7 @@ impl FuzzyComposition{
             numerator += middle * area;
             denominator += area;
         } // end loop
+
         // avoiding zero division
         if (denominator == 0.0){
             return 0.0;
@@ -296,7 +297,16 @@ mod tests {
         assert_eq!(fuzzyComposition.build(), true);
         assert_eq!(fuzzyComposition.countPoints(), 3);
         assert_eq!(fuzzyComposition.calculate(), 25.0);
-         //assert_eq!(fuzzyComposition.empty(), true);
+        assert_eq!(fuzzyComposition.empty(), true);
+
+        fuzzyComposition.addPoint(10.0, 0.0);
+        fuzzyComposition.addPoint(20.0, 1.0);
+        fuzzyComposition.addPoint(30.0, 0.0);
+
+        assert_eq!(fuzzyComposition.build(), true);
+        assert_eq!(fuzzyComposition.countPoints(), 3);
+        assert_eq!(fuzzyComposition.calculate(), 20.0);
+        assert_eq!(fuzzyComposition.empty(), true);
 
 
     }

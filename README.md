@@ -59,3 +59,14 @@ fn main() {
     }
 
 }
+////////////////////////////////////////////////
+
+use itertools::Itertools; // 0.9.0
+
+fn main() {
+    let some_iter = vec![1, 2, 3, 4, 5].into_iter();
+
+    for (prev, next) in some_iter.tuple_windows() {
+        println!("{}--{}", prev, next);
+    }
+}
