@@ -156,12 +156,13 @@ impl FuzzyComposition{
     }
 
     pub fn calculate(&self) -> f32{
+
         let mut numerator = 0.0;
         let mut denominator = 0.0;
         
         for ( current, next) in self.points.clone().into_iter().tuples::<(_, _)>() {
 
-            println!("{:?}--{:?}", current, next);
+            println!("current:{:?} -- next:{:?}", current, next);
 
             let mut area = 0.0;
             let mut  middle = 0.0;
@@ -175,9 +176,45 @@ impl FuzzyComposition{
                     middle = current.point;
                 }
             }
+            // if a triangle (Not properly a membership function)
+            else if current.pertinence == 0.0 || next.pertinence == 0.0 {
+                
+                let mut pertinence =0.0;
 
-        }
-        0.0
+                if current.pertinence > 0.0
+                {
+                    pertinence = current.pertinence;
+                }else {
+                    pertinence = next.pertinence;
+                }
+
+                area = ((next.point - current.point) * pertinence) / 2.0;
+                
+                if current.pertinence < next.pertinence{
+                    middle = ((next.point - current.point) / 1.5) + current.point;
+                } else {
+                    middle = ((next.point - current.point) / 3.0) + current.point;
+                }
+            }
+            // else if a square (Not properly a membership function)
+            else if (current.pertinence > 0.0 && next.pertinence > 0.0) && current.pertinence == next.pertinence{
+                area = (next.point - current.point) * current.pertinence;
+                middle = ((next.point - current.point) / 2.0) + current.point; 
+            }
+            // else if a trapeze (Not properly a membership function)
+            else if (current.pertinence > 0.0 && next.pertinence > 0.0) && current.pertinence != next.pertinence{
+                area = ((current.pertinence + next.pertinence) / 2.0) * (next.point - current.point);
+                middle = ((next.point - current.point) / 2.0) + current.point;
+            }
+            numerator += middle * area;
+            denominator += area;
+        } // end loop
+        // avoiding zero division
+        if (denominator == 0.0){
+            return 0.0;
+        } else {
+            return numerator / denominator;
+        }  
     }
 
     pub fn empty(&mut self) -> bool{
@@ -248,7 +285,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_rebuild() {
+    pub fn test_calculate() {
         
         let mut fuzzyComposition:FuzzyComposition =  FuzzyComposition::new();
 
@@ -258,7 +295,7 @@ mod tests {
 
         assert_eq!(fuzzyComposition.build(), true);
         assert_eq!(fuzzyComposition.countPoints(), 3);
-        assert_eq!(fuzzyComposition.calculate(), 0.0);
+        assert_eq!(fuzzyComposition.calculate(), 25.0);
          //assert_eq!(fuzzyComposition.empty(), true);
 
 
