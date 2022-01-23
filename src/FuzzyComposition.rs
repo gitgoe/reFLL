@@ -1,7 +1,11 @@
 
 extern crate iterslide;
 
+extern crate itertools;
+
 use iterslide::SlideIterator;
+
+use itertools::Itertools; // 0.9.0
 
 const EPSILON_VALUE: f32 = 1.0E-3;
 
@@ -63,11 +67,12 @@ impl FuzzyComposition{
                         break;
                     }
                 }
+
                 None => {}
             }
             previous = Some(current);
         }
-        // find the indexof the previus
+        // find the index of the previus
         let index = self.points.iter().position(|&r| r == previous.unwrap()).unwrap();
 
         println!("found greater {:?} at index {:?}", previous, index);
@@ -82,8 +87,9 @@ impl FuzzyComposition{
                 let bSegmentEnd = *window.get(3).unwrap();
                 // insert the fixed point
                 if let Some(fixedPoint) = self.rebuild(aSegmentBegin, aSegmentEnd, bSegmentBegin, bSegmentEnd){
+                    // insert new point
                     self.points.insert(index,fixedPoint);
-                    // delete curent et previus pointsArray
+                    // delete current et previus pointsArray
                     self.rmvPoint(aSegmentEnd);
                     self.rmvPoint(bSegmentBegin);
                 }
@@ -150,6 +156,27 @@ impl FuzzyComposition{
     }
 
     pub fn calculate(&self) -> f32{
+        let mut numerator = 0.0;
+        let mut denominator = 0.0;
+        
+        for ( current, next) in self.points.clone().into_iter().tuples::<(_, _)>() {
+
+            println!("{:?}--{:?}", current, next);
+
+            let mut area = 0.0;
+            let mut  middle = 0.0;
+
+            // if it is a singleton
+            if current.pertinence != next.pertinence && current.point == next.point {
+                
+                // enter in all points of singleton, but calculate only once
+                if current.pertinence > 0.0 {
+                    area = current.pertinence;
+                    middle = current.point;
+                }
+            }
+
+        }
         0.0
     }
 
@@ -231,7 +258,7 @@ mod tests {
 
         assert_eq!(fuzzyComposition.build(), true);
         assert_eq!(fuzzyComposition.countPoints(), 3);
-        //assert_eq!(fuzzyComposition.calculate(), 3);
+        assert_eq!(fuzzyComposition.calculate(), 0.0);
          //assert_eq!(fuzzyComposition.empty(), true);
 
 
