@@ -88,8 +88,11 @@ impl FuzzyComposition{
                 // insert the fixed point
                 if let Some(fixedPoint) = self.rebuild(aSegmentBegin, aSegmentEnd, bSegmentBegin, bSegmentEnd){
                     // insert new point
+                    println!("add new point: {:?}", fixedPoint);
                     self.points.insert(index,fixedPoint);
                     // delete current et previus pointsArray
+                    println!("rmvPoint: {:?}", aSegmentEnd);
+                    println!("rmvPoint: {:?}", bSegmentBegin);
                     self.rmvPoint(aSegmentEnd);
                     self.rmvPoint(bSegmentBegin);
                 }
@@ -286,6 +289,43 @@ mod tests {
     }
 
     #[test]
+    pub fn test_build2() {
+        let mut fuzzyComposition:FuzzyComposition =  FuzzyComposition::new();
+
+        fuzzyComposition.addPoint(0.0, 0.0);
+        fuzzyComposition.addPoint(10.0, 1.0);
+        fuzzyComposition.addPoint(20.0, 0.0);
+        fuzzyComposition.addPoint(10.0, 0.0);
+        fuzzyComposition.addPoint(20.0, 1.0);
+        fuzzyComposition.addPoint(30.0, 0.0);
+        fuzzyComposition.addPoint(20.0, 0.0);
+        fuzzyComposition.addPoint(30.0, 1.0);
+        fuzzyComposition.addPoint(40.0, 0.0);
+
+        assert_eq!(fuzzyComposition.build(), true);
+
+        assert_eq!(fuzzyComposition.checkPoint(0.0, 0.0), true);
+        assert_eq!(fuzzyComposition.checkPoint(10.0, 1.0), true);
+        assert_eq!(fuzzyComposition.checkPoint(15.0, 0.5), true);
+        assert_eq!(fuzzyComposition.checkPoint(20.0, 1.0), true);
+        //assert_eq!(fuzzyComposition.checkPoint(25.0, 0.5), true);
+       
+        //assert_eq!(fuzzyComposition.checkPoint(20.0, 1.0), true);
+       
+        //assert_eq!(fuzzyComposition.checkPoint(30.0, 0.0), true);
+        //assert_eq!(fuzzyComposition.countPoints(), 7);
+        /*
+        pointsArray:[point:0, pertinence:0]
+        pointsArray:[point:10, pertinence:1]
+        pointsArray:[point:15, pertinence:0.5]
+        pointsArray:[point:20, pertinence:1]
+        pointsArray:[point:25, pertinence:0.5]
+        pointsArray:[point:30, pertinence:1]
+        pointsArray:[point:40, pertinence:0]
+        */
+    }
+
+    #[test]
     pub fn test_calculate() {
         
         let mut fuzzyComposition:FuzzyComposition =  FuzzyComposition::new();
@@ -307,6 +347,32 @@ mod tests {
         assert_eq!(fuzzyComposition.countPoints(), 3);
         assert_eq!(fuzzyComposition.calculate(), 20.0);
         assert_eq!(fuzzyComposition.empty(), true);
+
+        fuzzyComposition.addPoint(20.0, 0.0);
+        fuzzyComposition.addPoint(30.0, 1.0);
+        fuzzyComposition.addPoint(50.0, 1.0);
+        fuzzyComposition.addPoint(60.0, 0.0);
+
+        assert_eq!(fuzzyComposition.build(), true);
+        assert_eq!(fuzzyComposition.countPoints(), 4);
+        assert_eq!(fuzzyComposition.calculate(), 40.0);
+        assert_eq!(fuzzyComposition.empty(), true);
+        /*
+        fuzzyComposition.addPoint(0.0, 0.0);
+        fuzzyComposition.addPoint(10.0, 1.0);
+        fuzzyComposition.addPoint(20.0, 0.0);
+        fuzzyComposition.addPoint(10.0, 0.0);
+        fuzzyComposition.addPoint(20.0, 1.0);
+        fuzzyComposition.addPoint(30.0, 0.0);
+        fuzzyComposition.addPoint(20.0, 0.0);
+        fuzzyComposition.addPoint(30.0, 1.0);
+        fuzzyComposition.addPoint(40.0, 0.0);
+
+        assert_eq!(fuzzyComposition.build(), true);
+        //assert_eq!(fuzzyComposition.countPoints(), 8);
+        //assert_eq!(fuzzyComposition.calculate(), 20.0);
+        assert_eq!(fuzzyComposition.empty(), true);
+        */
 
 
     }
