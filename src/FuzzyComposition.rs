@@ -24,8 +24,6 @@ impl PointArray {
     }
 }
 
-
-
 impl PartialEq for PointArray {
     fn eq(&self, other: &Self) -> bool {
         self.point == other.point && self.pertinence == other.pertinence

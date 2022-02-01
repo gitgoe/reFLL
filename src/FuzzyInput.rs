@@ -6,12 +6,12 @@ use crate::fuzzyIO::FuzzyIO;
 
 #[allow(non_snake_case)]
 pub struct FuzzyInput{
-    index: i64,
+    index: i32,
     pub fuzzyIO: FuzzyIO
 }
 
 impl FuzzyInput {
-    fn new(index: i64) -> FuzzyInput {
+    fn new(index: i32) -> FuzzyInput {
         FuzzyInput{
             index,
             fuzzyIO: FuzzyIO::new(index)

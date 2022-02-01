@@ -5,13 +5,13 @@ use crate::fuzzySet::FuzzySet;
 
 #[allow(non_snake_case)]
 pub struct FuzzyIO{
-    index: i64,
-    crispInput:f64,
+    index: i32,
+    crispInput:f32,
     pub fuzzySetArray: Rc<RefCell<Vec<FuzzySet>>>,
 }
 
 impl FuzzyIO {
-    pub fn new(index: i64) -> FuzzyIO {
+    pub fn new(index: i32) -> FuzzyIO {
         FuzzyIO{
             index,
             crispInput: 0.0,
@@ -20,17 +20,17 @@ impl FuzzyIO {
     }
 
     // Method to get the value of index
-    pub fn getIndex(&self) -> i64{
+    pub fn getIndex(&self) -> i32{
         return self.index;
     }
 
     // Method to set the value of crispInput
-    pub fn setCrispInput(& mut self, crispInput:f64){
+    pub fn setCrispInput(& mut self, crispInput:f32){
         self.crispInput = crispInput;
     }
 
     // Method to get the value of crispInput
-    pub fn getCrispInput(&self) -> f64{
+    pub fn getCrispInput(&self) -> f32{
         return self.crispInput;
     }
 
@@ -50,7 +50,15 @@ impl FuzzyIO {
         return self.fuzzySetArray.borrow().len();
     }
 
-    pub fn calculateFuzzySetPertinences(& self, crispValue: f64) {
+    pub fn resetFuzzySets(&self) {
+        let borrow = &mut *self.fuzzySetArray.borrow_mut();
+        for fs in borrow {
+            fs.reset();
+            println!("resetFuzzySets: {:?}", fs);
+        }
+    }
+
+    pub fn calculateFuzzySetPertinences(& self, crispValue: f32) {
         let borrow = &mut *self.fuzzySetArray.borrow_mut();
         for fs in borrow {
             fs.calculatePertinence(crispValue);

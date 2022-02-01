@@ -1,42 +1,42 @@
 #[allow(non_snake_case)]
 #[derive(Debug,Copy, Clone)]
 pub struct FuzzySet{
-    a: f64,
-    b: f64,
-    c: f64,
-    d: f64,
-    pertinence: f64
+    a: f32,
+    b: f32,
+    c: f32,
+    d: f32,
+    pertinence: f32
 }
 
 impl FuzzySet {
-    pub fn new(a: f64, b: f64, c: f64, d: f64) -> FuzzySet {
+    pub fn new(a: f32, b: f32, c: f32, d: f32) -> FuzzySet {
         FuzzySet{
             a,b,c,d,pertinence:0.0
         }
     }
 
     // Method to get the value of point A
-    fn getPointA(&self) -> f64 {
+    fn getPointA(&self) -> f32 {
         self.a
     }
 
     // Method to get the value of point B
-    fn getPointB(&self) -> f64 {
+    fn getPointB(&self) -> f32 {
         self.b
     }
 
     // Method to get the value of point C
-    fn getPointC(&self) -> f64 {
+    fn getPointC(&self) -> f32 {
         self.c
     }
 
     // Method to get the value of point D
-    fn getPointD(&self) -> f64 {
+    fn getPointD(&self) -> f32 {
         self.d
     }
 
     // Method to set the value of pertinence
-    pub fn setPertinence(& mut self, pertinence: f64) {
+    pub fn setPertinence(& mut self, pertinence: f32) {
         self.pertinence= pertinence;
         // check if the new pertinence is bigger then the current value because it can be called more then once by different FuzzyRuleConsequent
         if self.pertinence < pertinence {
@@ -45,12 +45,12 @@ impl FuzzySet {
     }
 
     // Method to get the value of pertinence
-    pub fn getPertinence(&self) -> f64 {
+    pub fn getPertinence(&self) -> f32 {
         self.pertinence
     }
 
     // Method to calculate the pertinence of the FuzzySet, according with the crispValue
-    pub fn calculatePertinence(& mut self, crispValue: f64)-> bool {
+    pub fn calculatePertinence(& mut self, crispValue: f32)-> bool {
         // check the crispValue is small then A
         if crispValue < self.a {
             // check if this FuzzySet represents "everithing small is true"
@@ -100,7 +100,7 @@ impl FuzzySet {
     }
 
     // Method to reset the value of pertinence
-    fn reset(& mut self){
+    pub fn reset(& mut self){
         self.pertinence = 0.0;
     }
 } 
