@@ -7,10 +7,14 @@ use iterslide::SlideIterator;
 
 use itertools::Itertools; // 0.9.0
 
+use std::fmt;
+
+use std::cmp::Ordering;
+
 const EPSILON_VALUE: f32 = 1.0E-3;
 
 #[allow(non_snake_case)]
-#[derive(Debug,Copy,Clone)]
+#[derive(Copy,Clone)]
 pub struct PointArray{ 
     point: f32,
     pertinence: f32,
@@ -22,9 +26,23 @@ impl PointArray {
     }
 }
 
-impl PartialEq for PointArray{
+impl PartialOrd for PointArray {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.point.partial_cmp(&other.point)
+    }
+}
+
+impl PartialEq for PointArray {
     fn eq(&self, other: &Self) -> bool {
-        self.point == other.point && self.pertinence == other.pertinence
+        self.point == other.point
+    }
+}
+impl fmt::Debug for PointArray {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("point")
+         .field("point", &self.point)
+         .field("pertinence", &self.pertinence)
+         .finish()
     }
 }
 
@@ -54,52 +72,65 @@ impl FuzzyComposition{
 
     // Method to iterate over the pointsArray, detect possible intersections and sent these points for "correction"
     pub fn build(&mut self) -> bool{
+        let mut cleanOnExit : Vec<PointArray> = vec![];
         let mut previous: Option<PointArray> = None;
         let mut is_greater = false;
+        println!("====================================================");
+        println!("==   BUILD    nbr_of_points: {}", self.points.len());
+        println!("====================================================");
         for current in self.points.clone().into_iter() {
+            println!("{:?} ", current);
             match previous {
                 Some(p) => {
                     // if the previous point is greater then the current
                     is_greater = p.is_previous_greater(&current);
                     // if yes, break an use this point
                     if is_greater {
-                        println!("previus {:?} is greater then {:?}", p, current);
-                        break;
-                    }
-                }
+                       // println!("previus {:?} is greater then {:?}", p, current);
+                       // find the index of the previus
+                        let index = self.points.iter().position(|&r| r == previous.unwrap()).unwrap();
 
+                        println!("found greater {:?} at index [{:?}] points.len():{:?}", previous, index, self.points.clone().len());
+
+                        // search the rigth windows that contains the previeus at index 1 to get the 4 tuple<_,_,_,_>
+                        for window in self.points.clone().into_iter().slide(4) { 
+                           // println!(" windows: {:?}", window); 
+                            if previous.as_ref() == window.get(1) {
+                                println!("==>> found point on windows: {:?}", window);
+                                let aSegmentBegin = *window.get(0).unwrap();
+                                let aSegmentEnd = *window.get(1).unwrap();
+                                let bSegmentBegin = *window.get(2).unwrap();
+                                let bSegmentEnd = *window.get(3).unwrap();
+                                // insert the fixed point
+                                if let Some(fixedPoint) = self.rebuild(aSegmentBegin, aSegmentEnd, bSegmentBegin, bSegmentEnd){
+                                    // insert new point
+                                    //println!("add new point: {:?}", fixedPoint);
+                                    self.points.insert(index,fixedPoint);
+                                    // delete current et previus pointsArray
+                                    cleanOnExit.push(aSegmentEnd);
+                                    cleanOnExit.push(bSegmentBegin);
+                                    break;
+                                }
+
+                            }       
+                        } // end window
+                        
+                    } 
+                }
                 None => {}
             }
             previous = Some(current);
         }
-        // find the index of the previus
-        let index = self.points.iter().position(|&r| r == previous.unwrap()).unwrap();
-
-        println!("found greater {:?} at index {:?}", previous, index);
-        
-        // search the rigth windows that contains the previeus at index 1 to get the 4 tuple<_,_,_,_>
-        for window in self.points.clone().into_iter().slide(4) {  
-            if previous.as_ref() == window.get(1) {
-                println!("{:?}", window);
-                let aSegmentBegin = *window.get(0).unwrap();
-                let aSegmentEnd = *window.get(1).unwrap();
-                let bSegmentBegin = *window.get(2).unwrap();
-                let bSegmentEnd = *window.get(3).unwrap();
-                // insert the fixed point
-                if let Some(fixedPoint) = self.rebuild(aSegmentBegin, aSegmentEnd, bSegmentBegin, bSegmentEnd){
-                    // insert new point
-                    println!("add new point: {:?}", fixedPoint);
-                    self.points.insert(index,fixedPoint);
-                    // delete current et previus pointsArray
-                    println!("rmvPoint: {:?}", aSegmentEnd);
-                    println!("rmvPoint: {:?}", bSegmentBegin);
-                    self.rmvPoint(aSegmentEnd);
-                    self.rmvPoint(bSegmentBegin);
-                }
-
-            }       
+    
+        println!("=== Remove invalid points =============");
+        for current in cleanOnExit.iter() {
+            println!("cleanOnExit: {:?}", current);
+            self.rmvPoint(*current);
         }
-          
+        println!("==== ==================================");
+        for current in self.points.clone().into_iter() {
+            println!("remain: {:?}", current);
+        }
         true
     }
 
@@ -152,7 +183,7 @@ impl FuzzyComposition{
             let pertinence = y1 + mua * (y2 - y1);
 
             let aux = Some(PointArray{point, pertinence});
-            println!("found an intersection calculate new point: {:?}", aux);
+            println!("found the new intersection point: {:?}", aux);
             return aux;
         }
         
@@ -162,6 +193,11 @@ impl FuzzyComposition{
 
         let mut numerator = 0.0;
         let mut denominator = 0.0;
+
+        let sorted =  self.points.clone().sort();
+
+        println!("sorted: {:?}", sorted);
+
         
         for ( current, next) in self.points.clone().into_iter().tuple_windows() {
 
@@ -289,7 +325,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_build2() {
+    pub fn test_bx2() {
         let mut fuzzyComposition:FuzzyComposition =  FuzzyComposition::new();
 
         fuzzyComposition.addPoint(0.0, 0.0);
@@ -308,12 +344,10 @@ mod tests {
         assert_eq!(fuzzyComposition.checkPoint(10.0, 1.0), true);
         assert_eq!(fuzzyComposition.checkPoint(15.0, 0.5), true);
         assert_eq!(fuzzyComposition.checkPoint(20.0, 1.0), true);
-        //assert_eq!(fuzzyComposition.checkPoint(25.0, 0.5), true);
-       
-        //assert_eq!(fuzzyComposition.checkPoint(20.0, 1.0), true);
-       
-        //assert_eq!(fuzzyComposition.checkPoint(30.0, 0.0), true);
-        //assert_eq!(fuzzyComposition.countPoints(), 7);
+        assert_eq!(fuzzyComposition.checkPoint(25.0, 0.5), true);
+        assert_eq!(fuzzyComposition.checkPoint(30.0, 1.0), true);
+        assert_eq!(fuzzyComposition.checkPoint(40.0, 0.0), true);
+        assert_eq!(fuzzyComposition.countPoints(), 7);
         /*
         pointsArray:[point:0, pertinence:0]
         pointsArray:[point:10, pertinence:1]
@@ -357,7 +391,7 @@ mod tests {
         assert_eq!(fuzzyComposition.countPoints(), 4);
         assert_eq!(fuzzyComposition.calculate(), 40.0);
         assert_eq!(fuzzyComposition.empty(), true);
-        /*
+        
         fuzzyComposition.addPoint(0.0, 0.0);
         fuzzyComposition.addPoint(10.0, 1.0);
         fuzzyComposition.addPoint(20.0, 0.0);
@@ -369,10 +403,10 @@ mod tests {
         fuzzyComposition.addPoint(40.0, 0.0);
 
         assert_eq!(fuzzyComposition.build(), true);
-        //assert_eq!(fuzzyComposition.countPoints(), 8);
-        //assert_eq!(fuzzyComposition.calculate(), 20.0);
+        assert_eq!(fuzzyComposition.countPoints(), 7);
+        assert_eq!(fuzzyComposition.calculate(), 20.0);
         assert_eq!(fuzzyComposition.empty(), true);
-        */
+        
 
 
     }

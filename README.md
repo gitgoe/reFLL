@@ -507,3 +507,15 @@ pointsArray:[point:20, pertinence:1]
 pointsArray:[point:25, pertinence:0.5]
 pointsArray:[point:30, pertinence:1]
 pointsArray:[point:40, pertinence:0]
+
+
+cargo test test_build -- --nocapture
+
+remain: point { point:: 0.0, pertinence: 0.0 }
+remain: point { point:: 10.0, pertinence: 1.0 }
+remain: point { point:: 15.0, pertinence: 0.5 }
+remain: point { point:: 20.0, pertinence: 1.0 }
+remain: point { point:: 25.0, pertinence: 0.5 }
+remain: point { point:: 30.0, pertinence: 1.0 }
+remain: point { point:: 40.0, pertinence: 0.0 }
+
