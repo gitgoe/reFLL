@@ -9,8 +9,6 @@ use itertools::Itertools; // 0.9.0
 
 use std::fmt;
 
-use std::cmp::Ordering;
-
 const EPSILON_VALUE: f32 = 1.0E-3;
 
 #[allow(non_snake_case)]
@@ -26,17 +24,14 @@ impl PointArray {
     }
 }
 
-impl PartialOrd for PointArray {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        self.point.partial_cmp(&other.point)
-    }
-}
+
 
 impl PartialEq for PointArray {
     fn eq(&self, other: &Self) -> bool {
-        self.point == other.point
+        self.point == other.point && self.pertinence == other.pertinence
     }
 }
+
 impl fmt::Debug for PointArray {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.debug_struct("point")
@@ -96,7 +91,7 @@ impl FuzzyComposition{
                         for window in self.points.clone().into_iter().slide(4) { 
                            // println!(" windows: {:?}", window); 
                             if previous.as_ref() == window.get(1) {
-                                println!("==>> found point on windows: {:?}", window);
+                                //println!("==>> found point on windows: {:?}", window);
                                 let aSegmentBegin = *window.get(0).unwrap();
                                 let aSegmentEnd = *window.get(1).unwrap();
                                 let bSegmentBegin = *window.get(2).unwrap();
@@ -123,14 +118,26 @@ impl FuzzyComposition{
         }
     
         println!("=== Remove invalid points =============");
+
         for current in cleanOnExit.iter() {
             println!("cleanOnExit: {:?}", current);
             self.rmvPoint(*current);
         }
+
         println!("==== ==================================");
-        for current in self.points.clone().into_iter() {
+
+        for current in self.points.iter() {
             println!("remain: {:?}", current);
         }
+
+        println!("==== ==================================");
+
+        self.points.sort_by(|a,b| a.point.partial_cmp(&b.point).unwrap());
+
+        for current in self.points.iter() {
+            println!("sorted: {:?}", current);
+        }
+
         true
     }
 
@@ -183,7 +190,7 @@ impl FuzzyComposition{
             let pertinence = y1 + mua * (y2 - y1);
 
             let aux = Some(PointArray{point, pertinence});
-            println!("found the new intersection point: {:?}", aux);
+            println!("add the new intersection point: {:?}", aux);
             return aux;
         }
         
@@ -194,11 +201,6 @@ impl FuzzyComposition{
         let mut numerator = 0.0;
         let mut denominator = 0.0;
 
-        let sorted =  self.points.clone().sort();
-
-        println!("sorted: {:?}", sorted);
-
-        
         for ( current, next) in self.points.clone().into_iter().tuple_windows() {
 
             println!("current:{:?} -- next:{:?}", current, next);
@@ -253,7 +255,7 @@ impl FuzzyComposition{
         if (denominator == 0.0){
             return 0.0;
         } else {
-            return numerator / denominator;
+            return (numerator / denominator).ceil();
         }  
     }
 
@@ -325,7 +327,7 @@ mod tests {
     }
 
     #[test]
-    pub fn test_bx2() {
+    pub fn test_build2() {
         let mut fuzzyComposition:FuzzyComposition =  FuzzyComposition::new();
 
         fuzzyComposition.addPoint(0.0, 0.0);
@@ -342,21 +344,17 @@ mod tests {
 
         assert_eq!(fuzzyComposition.checkPoint(0.0, 0.0), true);
         assert_eq!(fuzzyComposition.checkPoint(10.0, 1.0), true);
+        assert_eq!(fuzzyComposition.checkPoint(20.0, 0.0), false);
         assert_eq!(fuzzyComposition.checkPoint(15.0, 0.5), true);
+        assert_eq!(fuzzyComposition.checkPoint(10.0, 0.0), false);
         assert_eq!(fuzzyComposition.checkPoint(20.0, 1.0), true);
         assert_eq!(fuzzyComposition.checkPoint(25.0, 0.5), true);
+        assert_eq!(fuzzyComposition.checkPoint(30.0, 0.0), false);
+        assert_eq!(fuzzyComposition.checkPoint(20.0, 0.0), false);
         assert_eq!(fuzzyComposition.checkPoint(30.0, 1.0), true);
         assert_eq!(fuzzyComposition.checkPoint(40.0, 0.0), true);
         assert_eq!(fuzzyComposition.countPoints(), 7);
-        /*
-        pointsArray:[point:0, pertinence:0]
-        pointsArray:[point:10, pertinence:1]
-        pointsArray:[point:15, pertinence:0.5]
-        pointsArray:[point:20, pertinence:1]
-        pointsArray:[point:25, pertinence:0.5]
-        pointsArray:[point:30, pertinence:1]
-        pointsArray:[point:40, pertinence:0]
-        */
+      
     }
 
     #[test]
