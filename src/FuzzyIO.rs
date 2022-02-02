@@ -104,8 +104,25 @@ mod tests {
         assert_eq!(fuzzyIO.addFuzzySet(fuzzySet1), 1);
         assert_eq!(fuzzyIO.addFuzzySet(fuzzySet2), 2);
 
-        assert_eq!(fuzzyIO.cleanFuzzySets(), 0);
+        assert_eq!(fuzzyIO.cleanFuzzySets(), 0);   
+    }
+
+    #[test]
+    fn test_resetFuzzySets() {
+        let mut fuzzyIO:FuzzyIO =  FuzzyIO::new(5);
+       
+        let mut fuzzySet:FuzzySet =  FuzzySet::new(0.0, 10.0, 20.0, 30.0);
+
+        fuzzySet.setPertinence(0.242);
+
+        assert_eq!(fuzzyIO.addFuzzySet(fuzzySet), 1);
+
+        assert_eq!(0.242, fuzzyIO.fuzzySet(0).getPertinence());
         
+        fuzzyIO.resetFuzzySets();
+
+        assert_eq!(0.0, fuzzyIO.fuzzySet(0).getPertinence());
+
     }
 }
 

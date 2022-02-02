@@ -56,34 +56,21 @@ mod tests {
 
     #[test]
     fn test_addFuzzySetAndResetFuzzySets() {
+       
         let mut fuzzyOutput:FuzzyOutput =  FuzzyOutput::new(1);
 
         let mut fuzzySet:FuzzySet =  FuzzySet::new(0.0, 10.0, 10.0, 20.0);
+
+        fuzzySet.setPertinence(0.242);
+
+        assert_eq!(fuzzySet.getPertinence(), 0.242);
         
         assert_eq!(fuzzyOutput.addFuzzySet(fuzzySet), 1);
 
-        fuzzySet.setPertinence(0.242);
-        assert_eq!(fuzzySet.getPertinence(), 0.242);
-
         fuzzyOutput.resetFuzzySets();
 
-        //assert_eq!(fuzzySet.getPertinence(), 0.0);
+        assert_eq!(fuzzyOutput.fuzzySet(0).getPertinence(), 0.0);
 
     }
-/*
-    TEST(FuzzyOutput, addFuzzySetAndResetFuzzySets)
-{
-    FuzzyOutput *fuzzyOutput = new FuzzyOutput(1);
 
-    FuzzySet *fuzzySetTest = new FuzzySet(0, 10, 10, 20);
-
-    ASSERT_TRUE(fuzzyOutput->addFuzzySet(fuzzySetTest));
-
-    fuzzySetTest->setPertinence(0.242);
-    ASSERT_FLOAT_EQ(0.242, fuzzySetTest->getPertinence());
-
-    fuzzyOutput->resetFuzzySets();
-
-    ASSERT_FLOAT_EQ(0.0, fuzzySetTest->getPertinence());
-}*/
 }
