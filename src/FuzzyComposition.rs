@@ -250,7 +250,7 @@ impl FuzzyComposition{
         } // end loop
 
         // avoiding zero division
-        if (denominator == 0.0){
+        if denominator == 0.0 {
             return 0.0;
         } else {
             return (numerator / denominator).ceil();

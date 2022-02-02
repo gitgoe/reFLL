@@ -16,22 +16,22 @@ impl FuzzySet {
     }
 
     // Method to get the value of point A
-    fn getPointA(&self) -> f32 {
+    pub fn getPointA(&self) -> f32 {
         self.a
     }
 
     // Method to get the value of point B
-    fn getPointB(&self) -> f32 {
+    pub fn getPointB(&self) -> f32 {
         self.b
     }
 
     // Method to get the value of point C
-    fn getPointC(&self) -> f32 {
+    pub fn getPointC(&self) -> f32 {
         self.c
     }
 
     // Method to get the value of point D
-    fn getPointD(&self) -> f32 {
+    pub fn getPointD(&self) -> f32 {
         self.d
     }
 

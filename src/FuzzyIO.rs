@@ -123,6 +123,7 @@ mod tests {
 
         assert_eq!(0.0, fuzzyIO.fuzzySet(0).getPertinence());
 
+
     }
 }
 
