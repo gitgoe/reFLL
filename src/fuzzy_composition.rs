@@ -11,7 +11,7 @@ pub mod fuzzylogic{
     use std::fmt;
 
     const EPSILON_VALUE: f32 = 1.0E-3;
-
+   
     #[allow(non_snake_case)]
     #[derive(Copy,Clone)]
     pub struct PointArray{ 
@@ -404,6 +404,5 @@ mod tests {
         assert_eq!(fuzzy_composition.count_points(), 7);
         assert_eq!(fuzzy_composition.calculate(), 20.0);
         assert_eq!(fuzzy_composition.empty(), true);
-        
     }
 }
