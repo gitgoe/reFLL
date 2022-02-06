@@ -1,5 +1,5 @@
-pub mod fuzzyComposition;
-pub mod fuzzySet;
-pub mod fuzzyInput;
-pub mod FuzzyOutput;
-pub mod fuzzyIO;
+mod fuzzy_composition;
+mod fuzzy_set;
+mod fuzzy_io;
+mod fuzzy_input;
+mod fuzzy_output;

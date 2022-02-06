@@ -90,7 +90,7 @@ pub mod fuzzylogic{
                             for window in self.points.clone().into_iter().slide(4) { 
                             // println!(" windows: {:?}", window); 
                                 if previous.as_ref() == window.get(1) {
-                                    //println!("==>> found point on windows: {:?}", window);
+                                    println!("==>> found point on windows: {:?}", window);
                                     let a_segment_begin = *window.get(0).unwrap();
                                     let a_segment_end = *window.get(1).unwrap();
                                     let b_segment_begin = *window.get(2).unwrap();

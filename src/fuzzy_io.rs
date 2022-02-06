@@ -1,15 +1,12 @@
 pub mod fuzzylogic{
 
-    use std::rc::Rc;
-    use std::cell::RefCell;
-
     use crate::fuzzy_set::fuzzylogic::FuzzySet;
 
     #[allow(non_snake_case)]
     pub struct FuzzyIO{
         index: i32,
         crispInput:f32,
-        pub fuzzySetArray: Rc<RefCell<Vec<FuzzySet>>>,
+        pub fuzzySetArray: Vec<FuzzySet>,
     }
 
     impl FuzzyIO {
@@ -17,7 +14,7 @@ pub mod fuzzylogic{
             FuzzyIO{
                 index,
                 crispInput: 0.0,
-                fuzzySetArray: Rc::new(RefCell::new(vec![]))
+                fuzzySetArray: vec![]
             }
         }
 
@@ -37,32 +34,30 @@ pub mod fuzzylogic{
         }
 
         // Method to include a new FuzzySet into FuzzyIO
-        pub fn add_fuzzyset(& mut self, fuzzy_set: FuzzySet) -> usize{
-            self.fuzzySetArray.borrow_mut().push(fuzzy_set);
-            return self.fuzzySetArray.borrow_mut().len()
+        pub fn add_fuzzyset(&mut self, fuzzy_set: FuzzySet) -> usize{
+            self.fuzzySetArray.push(fuzzy_set);
+            return self.fuzzySetArray.len()
         }
 
-        pub fn fuzzyset(&self, pos: usize) -> FuzzySet {
-            let array =  &*self.fuzzySetArray.borrow();
+        pub fn fuzzyset(&mut self, pos: usize) -> FuzzySet {
+            let array =  &*self.fuzzySetArray;
             return array[pos];
         }
 
-        pub fn clean_fuzzysets(&self) -> usize {
-            self.fuzzySetArray.borrow_mut().clear();
-            return self.fuzzySetArray.borrow().len();
+        pub fn clean_fuzzysets(&mut self) -> usize {
+            self.fuzzySetArray.clear();
+            return self.fuzzySetArray.len();
         }
 
-        pub fn reset_fuzzysets(&self) {
-            let borrow = &mut *self.fuzzySetArray.borrow_mut();
-            for fs in borrow {
+        pub fn reset_fuzzysets(&mut self) {
+            for fs in self.fuzzySetArray.iter_mut() {
                 fs.reset();
                 println!("resetFuzzySets: {:?}", fs);
             }
         }
 
-        pub fn calculate_fuzzyset_pertinences(& self, crisp_value: f32) {
-            let borrow = &mut *self.fuzzySetArray.borrow_mut();
-            for fs in borrow {
+        pub fn calculate_fuzzyset_pertinences(& mut self, crisp_value: f32) {
+            for fs in  self.fuzzySetArray.iter_mut() {
                 fs.calculate_pertinence(crisp_value);
                 println!("calculate: {:?}", fs);
             }

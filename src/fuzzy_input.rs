@@ -19,7 +19,7 @@ pub mod fuzzylogic{
             }
         }
         // Method to calculate the pertinence of all FuzzySet
-        pub fn calculate_fuzzy_set_pertinences(& self)-> bool {
+        pub fn calculate_fuzzy_set_pertinences(&mut self)-> bool {
             // call calculatePertinence for each FuzzySet
             let crisp_input = self.fuzzyIO.get_crisp_input();
             self.fuzzyIO.calculate_fuzzyset_pertinences(crisp_input);

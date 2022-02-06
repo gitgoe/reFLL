@@ -2,8 +2,7 @@
  mod fuzzy_set;
  mod fuzzy_io;
  mod fuzzy_input;
- //mod FuzzyOutput;
- //mod fuzzyIO;
+ mod fuzzy_output;
 
 fn main() {
     println!("Hello, world!");
