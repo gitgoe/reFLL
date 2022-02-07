@@ -8,7 +8,6 @@ pub mod fuzzylogic{
     // possible logic operators
     #[allow(non_camel_case_types)]
     pub enum OperatorEnum {
-        UNKNOWN,
         AND,
         OR,
     }
@@ -16,7 +15,6 @@ pub mod fuzzylogic{
     // possible join associations modes
     #[allow(non_camel_case_types)]
     pub enum ModeEnum {
-        UNKNOWN,
         FS,
         FS_FS,
         FS_FRA,
@@ -36,8 +34,8 @@ pub mod fuzzylogic{
     impl FuzzyRuleAntecedent {
         pub fn new() -> FuzzyRuleAntecedent {
             FuzzyRuleAntecedent{
-                op: OperatorEnum::UNKNOWN,
-                mode: ModeEnum::UNKNOWN,
+                op: OperatorEnum::AND,
+                mode: ModeEnum::FS,
                 fuzzySet1:None,
                 fuzzySet2:None,
                 fuzzyRuleAntecedent1: None,
@@ -148,7 +146,7 @@ pub mod fuzzylogic{
                 ModeEnum::FRA_FRA => {
                     // case it is a single FuzzySet join, just return its pertinence
                     return self.fuzzySet1.unwrap().get_pertinence();
-                },
+                }
             }
             
         }
