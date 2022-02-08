@@ -287,9 +287,11 @@ mod tests {
         let mut fuzzy_set1:FuzzySet =  FuzzySet::new(0.0, 10.0, 10.0, 20.0);
         fuzzy_set1.set_pertinence(0.25);
 
-        let fuzzy_ruleantecedent1 = FuzzyRuleAntecedent::new();
+        let mut fuzzy_ruleantecedent1 = FuzzyRuleAntecedent::new();
         let mut fuzzy_set2:FuzzySet =  FuzzySet::new(10.0, 20.0, 20.0, 30.0);
         fuzzy_set2.set_pertinence(0.75);
+        assert_eq!(fuzzy_ruleantecedent1.join_single(Some(fuzzy_set2)), true);
+        
     
         let mut fuzzy_ruleantecedent3 = FuzzyRuleAntecedent::new();
         assert_eq!(fuzzy_ruleantecedent3.join_with_and_with_fra_reverse(Some(Box::new(fuzzy_ruleantecedent1)), Some(fuzzy_set1)), true);
@@ -302,13 +304,30 @@ mod tests {
         let mut fuzzy_set1:FuzzySet =  FuzzySet::new(0.0, 10.0, 10.0, 20.0);
         fuzzy_set1.set_pertinence(0.25);
 
-        let fuzzy_ruleantecedent1 = FuzzyRuleAntecedent::new();
+        let mut fuzzy_ruleantecedent1 = FuzzyRuleAntecedent::new();
         let mut fuzzy_set2:FuzzySet =  FuzzySet::new(10.0, 20.0, 20.0, 30.0);
         fuzzy_set2.set_pertinence(0.75);
+        assert_eq!(fuzzy_ruleantecedent1.join_single(Some(fuzzy_set2)), true);
     
         let mut fuzzy_ruleantecedent4 = FuzzyRuleAntecedent::new();
         assert_eq!(fuzzy_ruleantecedent4.join_with_or_with_fra(Some(fuzzy_set1),Some(Box::new(fuzzy_ruleantecedent1))), true);
-        assert_eq!(fuzzy_ruleantecedent4.evaluate(), 0.25);
+        assert_eq!(fuzzy_ruleantecedent4.evaluate(), 0.75);
+    }
+
+    #[test]
+    fn test_join_one_fuzzyset_and_one_fuzzyantecedent_and_evaluate4() {
+        
+        let mut fuzzy_set1:FuzzySet =  FuzzySet::new(0.0, 10.0, 10.0, 20.0);
+        fuzzy_set1.set_pertinence(0.25);
+
+        let mut fuzzy_ruleantecedent1 = FuzzyRuleAntecedent::new();
+        let mut fuzzy_set2:FuzzySet =  FuzzySet::new(10.0, 20.0, 20.0, 30.0);
+        fuzzy_set2.set_pertinence(0.75);
+        assert_eq!(fuzzy_ruleantecedent1.join_single(Some(fuzzy_set2)), true);
+    
+        let mut fuzzy_ruleantecedent5 = FuzzyRuleAntecedent::new();
+        assert_eq!(fuzzy_ruleantecedent5.join_with_or_with_fra_reverse(Some(Box::new(fuzzy_ruleantecedent1)), Some(fuzzy_set1)), true);
+        assert_eq!(fuzzy_ruleantecedent5.evaluate(), 0.75);
     }
 
     
