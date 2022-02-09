@@ -271,7 +271,7 @@ mod tests {
 
         let fuzzy_composition = fuzzy_output.get_fuzzy_composition();
 
-        //assert_eq!(fuzzy_composition.count_points(), 8);
+        //assert_eq!(fuzzy_composition.count_points(), 8);  --> a corriger
 
     }
 

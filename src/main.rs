@@ -4,6 +4,7 @@
  mod fuzzy_input;
  mod fuzzy_output;
  mod fuzzy_ruleantecedent;
+ mod fuzzy_ruleconsequent;
 
 fn main() {
     println!("Hello, world!");

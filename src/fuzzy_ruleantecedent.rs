@@ -125,7 +125,7 @@ pub mod fuzzylogic{
         return self.join_with_or_with_fra(fuzzy_set, fuzzy_rule_antecedent);
     }
 
-        pub fn evaluate(&self) -> f32{
+    pub fn evaluate(&self) -> f32{
 
             // switch by the mode value
             match self.mode {
