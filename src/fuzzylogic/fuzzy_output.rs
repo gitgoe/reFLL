@@ -1,11 +1,10 @@
 
-pub mod fuzzylogic{
-
     use std::ops::DerefMut;
     use std::ops::Deref;
 
-    use crate::fuzzy_composition::fuzzylogic::FuzzyComposition;
-    use crate::fuzzy_io::fuzzylogic::FuzzyIO;
+    use crate::fuzzylogic::fuzzy_composition::FuzzyComposition;
+    use crate::fuzzylogic::fuzzy_io::FuzzyIO;
+
 
     const EPSILON_VALUE: f32 = 1.0E-3;
 
@@ -202,13 +201,13 @@ pub mod fuzzylogic{
             return true;
         }
     }
-}
+
 
 #[cfg(test)]
 mod tests {
     // Note this useful idiom: importing names from outer (for mod tests) scope.
-    use super::fuzzylogic::*;
-    use crate::fuzzy_set::fuzzylogic::FuzzySet;
+    use super::*;
+    use crate::fuzzylogic::fuzzy_set::FuzzySet;
 
     #[test]
     fn test_fuzzy_output() {

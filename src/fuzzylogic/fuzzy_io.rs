@@ -1,6 +1,6 @@
-pub mod fuzzylogic{
 
-    use crate::fuzzy_set::fuzzylogic::FuzzySet;
+  
+    use crate::fuzzylogic::fuzzy_set::FuzzySet;
 
     #[allow(non_snake_case)]
     pub struct FuzzyIO{
@@ -64,14 +64,15 @@ pub mod fuzzylogic{
 
         }
     }
-}
+
 
 #[cfg(test)]
 mod tests {
     // Note this useful idiom: importing names from outer (for mod tests) scope.
-    use super::fuzzylogic::*;
-    use crate::fuzzy_set::fuzzylogic::FuzzySet;
 
+    use crate::fuzzylogic::fuzzy_io::FuzzyIO;
+    use crate::fuzzylogic::fuzzy_set::FuzzySet;
+  
     #[test]
     fn test_new() {
         let mut fuzzy_io:FuzzyIO =  FuzzyIO::new(5);

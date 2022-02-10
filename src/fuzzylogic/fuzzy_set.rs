@@ -1,4 +1,3 @@
-pub mod fuzzylogic{
 
     #[allow(non_snake_case)]
     #[derive(Debug,Copy, Clone)]
@@ -108,15 +107,10 @@ pub mod fuzzylogic{
         }
     } 
 
-}
-
-
-
 #[cfg(test)]
 mod tests {
-    
     // Note this useful idiom: importing names from outer (for mod tests) scope.
-    use super::fuzzylogic::*;
+    use super::*;
 
     #[test]
     pub fn test_new() {

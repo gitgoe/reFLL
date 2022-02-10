@@ -1,9 +1,8 @@
-pub mod fuzzylogic{
+
 
     use std::ops::DerefMut;
     use std::ops::Deref;
-    use crate::fuzzy_io::fuzzylogic::FuzzyIO;
-
+    use crate::fuzzylogic::fuzzy_io::FuzzyIO;
 
     #[allow(non_snake_case)]
     pub struct FuzzyInput{
@@ -34,14 +33,15 @@ pub mod fuzzylogic{
     impl DerefMut for FuzzyInput {
         fn deref_mut(&mut self) -> &mut FuzzyIO { &mut self.fuzzyIO }
     }
-}
+
 
 #[cfg(test)]
 mod tests {
     // Note this useful idiom: importing names from outer (for mod tests) scope.
-    use crate::fuzzy_set::fuzzylogic::FuzzySet;
-    use super::fuzzylogic::*;
+    use super::*;
+    use crate::fuzzylogic::fuzzy_set::FuzzySet;
 
+   
     #[test]
     fn test_add_fuzzyset() {
         let mut fuzzy_input:FuzzyInput =  FuzzyInput::new(1);
