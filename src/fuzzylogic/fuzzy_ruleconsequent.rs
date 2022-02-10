@@ -55,8 +55,8 @@ mod tests {
     fn test_new_fuzzy_ruleconsequent() {
         let mut fuzzy_ruleconsequent:FuzzyRuleConsequent =  FuzzyRuleConsequent::new();
 
-        let mut fuzzy_set1:FuzzySet =  FuzzySet::new(0.0, 10.0, 10.0, 20.0);
-        let mut fuzzy_set2:FuzzySet =  FuzzySet::new(10.0, 20.0, 20.0, 30.0);
+        let  fuzzy_set1:FuzzySet =  FuzzySet::new(0.0, 10.0, 10.0, 20.0);
+        let  fuzzy_set2:FuzzySet =  FuzzySet::new(10.0, 20.0, 20.0, 30.0);
         
         assert_eq!(fuzzy_ruleconsequent.add_output(fuzzy_set1), 1);
         assert_eq!(fuzzy_ruleconsequent.add_output(fuzzy_set2), 2);
