@@ -42,7 +42,14 @@ mod tests {
         fuzzy_set2.set_pertinence(0.75);
         assert_eq!(fuzzy_ruleantecedent2.join_single(Some(fuzzy_set2)), true);
 
-        //let mut fuzzy_ruleantecedent3 = FuzzyRuleAntecedent::new();
+        let mut fuzzy_ruleantecedent3 = FuzzyRuleAntecedent::new();
+        assert_eq!(fuzzy_ruleantecedent3.join_with_and_with_frafra(Some(Box::new(fuzzy_ruleantecedent1)), Some(Box::new(fuzzy_ruleantecedent2))), true);
+        
+        let mut fuzzy_ruleconsequent:FuzzyRuleConsequent =  FuzzyRuleConsequent::new();
+        let fuzzy_set3:FuzzySet =  FuzzySet::new(10.0, 20.0, 20.0, 30.0);
+        assert_eq!(fuzzy_ruleconsequent.add_output(fuzzy_set3), 1);
+        
+        let mut _fuzzy_rule = FuzzyRule::new(1,Some(fuzzy_ruleantecedent3), Some(fuzzy_ruleconsequent));
         
     }
 }

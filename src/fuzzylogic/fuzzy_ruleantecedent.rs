@@ -44,70 +44,70 @@ impl FuzzyRuleAntecedent {
         }
     }
     // Method to create a FuzzyRuleAntecedent with just one single FuzzySet
-    pub fn join_single(&mut self, fuzzy_set: Option<FuzzySet>)-> bool {
-        // check if FuzzySet is valide
-        if fuzzy_set.is_some() {
-            
-            // set the mode and reference
-            self.mode = ModeEnum::FS;
-            self.fuzzySet1 = fuzzy_set;
-            return true;
-        }
-        return false;
+pub fn join_single(&mut self, fuzzy_set: Option<FuzzySet>)-> bool {
+    // check if FuzzySet is valide
+    if fuzzy_set.is_some() {
+        
+        // set the mode and reference
+        self.mode = ModeEnum::FS;
+        self.fuzzySet1 = fuzzy_set;
+        return true;
     }
+    return false;
+}
 
-    // Method to create a FuzzyRuleAntecedent with two FuzzySet, with AND
-    pub fn join_with_and(&mut self, fuzzy_set1: Option<FuzzySet>, fuzzy_set2: Option<FuzzySet>)-> bool {
-            // check if FuzzySet is valide
-            if fuzzy_set1.is_some() && fuzzy_set2.is_some() {
-            
-            // set the mode and reference
-            self.op = OperatorEnum::AND;
-            self.mode = ModeEnum::FS_FS;
-            self.fuzzySet1 = fuzzy_set1;
-            self.fuzzySet2 = fuzzy_set2;
-            return true;
-        }
-        return false;
-    }
-
-    // Method to create a FuzzyRuleAntecedent with two FuzzySet, with OR
-    pub fn join_with_or(&mut self, fuzzy_set1: Option<FuzzySet>, fuzzy_set2: Option<FuzzySet>)-> bool {
+// Method to create a FuzzyRuleAntecedent with two FuzzySet, with AND
+pub fn join_with_and(&mut self, fuzzy_set1: Option<FuzzySet>, fuzzy_set2: Option<FuzzySet>)-> bool {
         // check if FuzzySet is valide
         if fuzzy_set1.is_some() && fuzzy_set2.is_some() {
-            
-            // set the mode and reference
-            self.op = OperatorEnum::OR;
-            self.mode = ModeEnum::FS_FS;
-            self.fuzzySet1 = fuzzy_set1;
-            self.fuzzySet2 = fuzzy_set2;
-            return true;
-        }
-        return false;
+        
+        // set the mode and reference
+        self.op = OperatorEnum::AND;
+        self.mode = ModeEnum::FS_FS;
+        self.fuzzySet1 = fuzzy_set1;
+        self.fuzzySet2 = fuzzy_set2;
+        return true;
     }
+    return false;
+}
 
-    // Method to create a FuzzyRuleAntecedent with one FuzzySet and one FuzzyRuleAntecedent, with AND
-    pub fn join_with_and_with_fra(&mut self, fuzzy_set: Option<FuzzySet>, fuzzy_rule_antecedent: Option<Box<FuzzyRuleAntecedent>>)-> bool {
-        // check if FuzzySet and fuzzy_rule_antecedent are valide
-        if fuzzy_set.is_some() && fuzzy_rule_antecedent.is_some(){
-            
-            // set the mode and reference
-            self.op = OperatorEnum::AND;
-            self.mode = ModeEnum::FS_FRA;
-            self.fuzzySet1 = fuzzy_set;
-            self.fuzzyRuleAntecedent1 = fuzzy_rule_antecedent;
-            return true;
-        }
-        return false;
+// Method to create a FuzzyRuleAntecedent with two FuzzySet, with OR
+pub fn join_with_or(&mut self, fuzzy_set1: Option<FuzzySet>, fuzzy_set2: Option<FuzzySet>)-> bool {
+    // check if FuzzySet is valide
+    if fuzzy_set1.is_some() && fuzzy_set2.is_some() {
+        
+        // set the mode and reference
+        self.op = OperatorEnum::OR;
+        self.mode = ModeEnum::FS_FS;
+        self.fuzzySet1 = fuzzy_set1;
+        self.fuzzySet2 = fuzzy_set2;
+        return true;
     }
+    return false;
+}
 
-    // Method to create a FuzzyRuleAntecedent with one FuzzySet and one FuzzyRuleAntecedent, with AND (Inverse Params)
-    pub fn join_with_and_with_fra_reverse(&mut self, fuzzy_rule_antecedent: Option<Box<FuzzyRuleAntecedent>>, fuzzy_set: Option<FuzzySet> )-> bool {
-        return self.join_with_and_with_fra(fuzzy_set, fuzzy_rule_antecedent);
+// Method to create a FuzzyRuleAntecedent with one FuzzySet and one FuzzyRuleAntecedent, with AND
+pub fn join_with_and_with_fra(&mut self, fuzzy_set: Option<FuzzySet>, fuzzy_rule_antecedent: Option<Box<FuzzyRuleAntecedent>>)-> bool {
+    // check if FuzzySet and fuzzy_rule_antecedent are valide
+    if fuzzy_set.is_some() && fuzzy_rule_antecedent.is_some(){
+        
+        // set the mode and reference
+        self.op = OperatorEnum::AND;
+        self.mode = ModeEnum::FS_FRA;
+        self.fuzzySet1 = fuzzy_set;
+        self.fuzzyRuleAntecedent1 = fuzzy_rule_antecedent;
+        return true;
     }
+    return false;
+}
 
-    // Method to create a FuzzyRuleAntecedent with one FuzzySet and one FuzzyRuleAntecedent, with OR
-    pub fn join_with_or_with_fra(&mut self, fuzzy_set: Option<FuzzySet>, fuzzy_rule_antecedent: Option<Box<FuzzyRuleAntecedent>>)-> bool {
+// Method to create a FuzzyRuleAntecedent with one FuzzySet and one FuzzyRuleAntecedent, with AND (Inverse Params)
+pub fn join_with_and_with_fra_reverse(&mut self, fuzzy_rule_antecedent: Option<Box<FuzzyRuleAntecedent>>, fuzzy_set: Option<FuzzySet> )-> bool {
+    return self.join_with_and_with_fra(fuzzy_set, fuzzy_rule_antecedent);
+}
+
+// Method to create a FuzzyRuleAntecedent with one FuzzySet and one FuzzyRuleAntecedent, with OR
+pub fn join_with_or_with_fra(&mut self, fuzzy_set: Option<FuzzySet>, fuzzy_rule_antecedent: Option<Box<FuzzyRuleAntecedent>>)-> bool {
     // check if FuzzySet and fuzzy_rule_antecedent are valide
     if fuzzy_set.is_some() && fuzzy_rule_antecedent.is_some(){
         
@@ -125,6 +125,38 @@ impl FuzzyRuleAntecedent {
 pub fn join_with_or_with_fra_reverse(&mut self, fuzzy_rule_antecedent: Option<Box<FuzzyRuleAntecedent>>, fuzzy_set: Option<FuzzySet> )-> bool {
     return self.join_with_or_with_fra(fuzzy_set, fuzzy_rule_antecedent);
 }
+
+
+// Method to create a FuzzyRuleAntecedent with two FuzzyRuleAntecedent, with AND
+pub fn join_with_and_with_frafra(&mut self, fuzzy_rule_antecedent1: Option<Box<FuzzyRuleAntecedent>>, fuzzy_rule_antecedent2: Option<Box<FuzzyRuleAntecedent>>)-> bool {
+    // check if two FuzzyRuleAntecedent are valid
+    if fuzzy_rule_antecedent1.is_some() && fuzzy_rule_antecedent2.is_some(){
+        
+        // set the mode and reference
+        self.op = OperatorEnum::AND;
+        self.mode = ModeEnum::FRA_FRA;
+        self.fuzzyRuleAntecedent1 = fuzzy_rule_antecedent1;
+        self.fuzzyRuleAntecedent2 = fuzzy_rule_antecedent2;
+        return true;
+    }
+    return false;
+}
+
+// Method to create a FuzzyRuleAntecedent with two FuzzyRuleAntecedent, with OR
+pub fn join_with_or_with_frafra(&mut self, fuzzy_rule_antecedent1: Option<Box<FuzzyRuleAntecedent>>, fuzzy_rule_antecedent2: Option<Box<FuzzyRuleAntecedent>>)-> bool {
+    // check if two FuzzyRuleAntecedent are valid
+    if fuzzy_rule_antecedent1.is_some() && fuzzy_rule_antecedent2.is_some(){
+        
+        // set the mode and reference
+        self.op = OperatorEnum::OR;
+        self.mode = ModeEnum::FRA_FRA;
+        self.fuzzyRuleAntecedent1 = fuzzy_rule_antecedent1;
+        self.fuzzyRuleAntecedent2 = fuzzy_rule_antecedent2;
+        return true;
+    }
+    return false;
+}
+
 
 pub fn evaluate(&self) -> f32{
 
