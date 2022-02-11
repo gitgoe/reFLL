@@ -21,6 +21,39 @@ impl FuzzyRule {
             fuzzyRuleConsequent: fuzzy_ruleconsequent,
         }
     }
+
+    // Method to get the value of index
+    pub fn get_index(&self) -> i32 {
+        return self.index;
+    }
+
+
+    // Method to evaluate the total expression
+    pub fn is_fired(&self) -> bool {
+        return self.fired;
+    }
+
+    // Method to evaluate the total expression
+    pub fn evaluate_expression(&mut self) -> bool {
+        
+        // check if the FuzzyRuleAntecedent and FuzzyRuleConsequent are valid
+        if self.fuzzyRuleAntecedent.is_some() && self.fuzzyRuleConsequent.is_some() {
+            // call the evaluator in the FuzzyRuleAntecedent
+            let power_of_antecedent = self.fuzzyRuleAntecedent.as_ref().unwrap().evaluate();
+
+            // if the power of FuzzyRuleAntecedent is bigget the 0.0, this rule was fired, else, no
+            if power_of_antecedent > 0.0 {
+                self.fired = true;
+            } else {
+                self.fired = false;
+            }   
+            // pass the power of FuzzyRuleAntecedent to FuzzyRuleConsequent by its evaluator
+            self.fuzzyRuleConsequent.unwrap().evaluate(power_of_antecedent);
+        }
+        return self.fired;
+    }
+
+
 }   
 
 #[cfg(test)]
@@ -49,7 +82,10 @@ mod tests {
         let fuzzy_set3:FuzzySet =  FuzzySet::new(10.0, 20.0, 20.0, 30.0);
         assert_eq!(fuzzy_ruleconsequent.add_output(fuzzy_set3), 1);
         
-        let mut _fuzzy_rule = FuzzyRule::new(1,Some(fuzzy_ruleantecedent3), Some(fuzzy_ruleconsequent));
+        let fuzzy_rule = FuzzyRule::new(1,Some(fuzzy_ruleantecedent3), Some(fuzzy_ruleconsequent));
         
+        assert_eq!(fuzzy_rule.get_index(), 1);
+
+        assert_eq!(fuzzy_rule.is_fired(), false);
     }
 }
