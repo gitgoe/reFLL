@@ -6,3 +6,4 @@ pub mod fuzzy_output;
 pub mod fuzzy_ruleantecedent;
 pub mod fuzzy_ruleconsequent;
 pub mod fuzzy_rule;
+pub mod fuzzy;

@@ -2,8 +2,9 @@
 use crate::fuzzylogic::fuzzy_set::FuzzySet;
 
 #[allow(non_snake_case)]
+#[derive(Debug, Clone)]
 pub struct FuzzyRuleConsequent{
-    fuzzySetOutputArray: Vec<FuzzySet>,
+     fuzzySetOutputArray: Vec<FuzzySet>,
 } 
 
 impl FuzzyRuleConsequent {

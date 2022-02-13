@@ -48,7 +48,7 @@ impl FuzzyRule {
                 self.fired = false;
             }   
             // pass the power of FuzzyRuleAntecedent to FuzzyRuleConsequent by its evaluator
-            self.fuzzyRuleConsequent.unwrap().evaluate(power_of_antecedent);
+            self.fuzzyRuleConsequent.as_mut().unwrap().evaluate(power_of_antecedent);
         }
         return self.fired;
     }
@@ -71,7 +71,7 @@ mod tests {
         assert_eq!(fuzzy_ruleantecedent1.join_single(Some(fuzzy_set1)), true);
 
         let mut fuzzy_ruleantecedent2 = FuzzyRuleAntecedent::new();
-        let mut fuzzy_set2:FuzzySet =  FuzzySet::new(10.0, 20.0, 20.0, 30.0);
+        let mut fuzzy_set2:FuzzySet =  FuzzySet::new(0.0, 10.0, 10.0, 20.0);
         fuzzy_set2.set_pertinence(0.75);
         assert_eq!(fuzzy_ruleantecedent2.join_single(Some(fuzzy_set2)), true);
 
@@ -79,13 +79,17 @@ mod tests {
         assert_eq!(fuzzy_ruleantecedent3.join_with_and_with_frafra(Some(Box::new(fuzzy_ruleantecedent1)), Some(Box::new(fuzzy_ruleantecedent2))), true);
         
         let mut fuzzy_ruleconsequent:FuzzyRuleConsequent =  FuzzyRuleConsequent::new();
-        let fuzzy_set3:FuzzySet =  FuzzySet::new(10.0, 20.0, 20.0, 30.0);
+        let fuzzy_set3:FuzzySet =  FuzzySet::new(0.0, 10.0, 10.0, 20.0);
         assert_eq!(fuzzy_ruleconsequent.add_output(fuzzy_set3), 1);
         
-        let fuzzy_rule = FuzzyRule::new(1,Some(fuzzy_ruleantecedent3), Some(fuzzy_ruleconsequent));
+        let mut fuzzy_rule = FuzzyRule::new(1,Some(fuzzy_ruleantecedent3), Some(fuzzy_ruleconsequent));
         
         assert_eq!(fuzzy_rule.get_index(), 1);
 
         assert_eq!(fuzzy_rule.is_fired(), false);
+
+        assert_eq!(fuzzy_rule.evaluate_expression(), true);
+
+        assert_eq!(fuzzy_rule.is_fired(), true);
     }
 }
