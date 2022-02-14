@@ -18,7 +18,7 @@
             }
         }
         // Method to calculate the pertinence of all FuzzySet
-        pub fn calculate_fuzzy_set_pertinences(&mut self)-> bool {
+        pub fn calculate_fuzzyset_pertinences(&mut self)-> bool {
             // call calculatePertinence for each FuzzySet
             let crisp_input = self.fuzzyIO.get_crisp_input();
             self.fuzzyIO.calculate_fuzzyset_pertinences(crisp_input);
@@ -69,7 +69,7 @@ mod tests {
 
         fuzzy_input.set_crisp_input(5.0);
         
-        fuzzy_input.calculate_fuzzy_set_pertinences();
+        fuzzy_input.calculate_fuzzyset_pertinences();
         assert_eq!(fuzzy_input.fuzzyset(0).get_pertinence(), 0.5);
         assert_eq!(fuzzy_input.fuzzyset(1).get_pertinence(), 0.0);
     }
