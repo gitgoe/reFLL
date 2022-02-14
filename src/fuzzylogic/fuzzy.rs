@@ -39,10 +39,10 @@
     }
 
     // Method to set a crisp value to one FuzzyInput
-    pub fn set_input(&mut self, fuzzy_inputindex: i32, crisp_value: f32) -> bool {
+    pub fn set_input(&mut self, fuzzy_input_index: i32, crisp_value: f32) -> bool {
      let fuzzy_input = self.fuzzyInputArray
       .iter_mut()
-      .find(|fs| fs.get_index()== fuzzy_inputindex);
+      .find(|fs| fs.get_index()== fuzzy_input_index);
       if let Some(fi) = fuzzy_input {
         fi.set_crisp_input(crisp_value);
         return true;
@@ -72,7 +72,7 @@
       // for each FuzzyOutput, truncate the result
       self.fuzzyOutputArray.iter_mut().map(|fo| fo.truncate());
 
-      return false;
+      return true;
     }
 
     // Method to verify if one specific FuzzyRule was triggered
@@ -193,5 +193,82 @@ mod tests {
       let mut fuzzy_rule = FuzzyRule::new(1,Some(fuzzy_ruleantecedent3), Some(fuzzy_ruleconsequent));
       
       assert_eq!(fuzzy.add_fuzzyrule(fuzzy_rule), 1); 
+    }
+
+    #[test]
+    fn test_set_input_And_Fuzzify_and_is_firedrule_And_defuzzify() {
+
+      let mut fuzzy = Fuzzy::new();
+
+      // FuzzyInput
+      let mut temperature:FuzzyInput =  FuzzyInput::new(1);
+
+      let low:FuzzySet =  FuzzySet::new(0.0, 10.0, 10.0, 20.0);
+      temperature.add_fuzzyset(low);
+
+      let mean:FuzzySet =  FuzzySet::new(10.0, 20.0, 30.0, 40.0);
+      temperature.add_fuzzyset(mean);
+
+      let high:FuzzySet =  FuzzySet::new(30.0, 40.0, 10.0, 50.0);
+      temperature.add_fuzzyset(high);
+   
+      fuzzy.add_fuzzyinput(temperature);
+
+      // FuzzyOutput
+      let mut climate:FuzzyOutput =  FuzzyOutput::new(1);
+
+      let cold:FuzzySet =  FuzzySet::new(0.0, 10.0, 10.0, 20.0);
+      climate.add_fuzzyset(cold);
+
+      let good:FuzzySet =  FuzzySet::new(10.0, 20.0, 30.0, 40.0);
+      climate.add_fuzzyset(good);
+
+      let hot:FuzzySet =  FuzzySet::new(30.0, 40.0, 10.0, 50.0);
+      climate.add_fuzzyset(hot);
+
+      fuzzy.add_fuzzyoutput(climate);
+
+      // Building FuzzyRule
+      let mut ifTemperatureLow = FuzzyRuleAntecedent::new();
+      ifTemperatureLow.join_single(Some(low));
+
+      let mut thenClimateCold:FuzzyRuleConsequent =  FuzzyRuleConsequent::new();
+      thenClimateCold.add_output(cold);
+
+      let mut fuzzy_rule1 = FuzzyRule::new(1,Some(ifTemperatureLow), Some(thenClimateCold));
+          
+      fuzzy.add_fuzzyrule(fuzzy_rule1);
+
+      // Building FuzzyRule
+      let mut ifTemperatureMean = FuzzyRuleAntecedent::new();
+      ifTemperatureMean.join_single(Some(mean));
+
+      let mut thenClimateGood:FuzzyRuleConsequent =  FuzzyRuleConsequent::new();
+      thenClimateGood.add_output(good);
+
+      let mut fuzzy_rule2 = FuzzyRule::new(2,Some(ifTemperatureMean), Some(thenClimateGood));
+          
+      fuzzy.add_fuzzyrule(fuzzy_rule2);
+
+      // Building FuzzyRule
+      let mut ifTemperatureHigh = FuzzyRuleAntecedent::new();
+      ifTemperatureHigh.join_single(Some(high));
+
+      let mut thenClimateHot:FuzzyRuleConsequent =  FuzzyRuleConsequent::new();
+      thenClimateHot.add_output(cold);
+
+      let mut fuzzy_rule3 = FuzzyRule::new(3,Some(ifTemperatureHigh), Some(thenClimateHot));
+          
+      assert_eq!(fuzzy.add_fuzzyrule(fuzzy_rule3), 3);
+
+      assert_eq!(fuzzy.set_input(1, 15.0), true);
+
+      assert_eq!(fuzzy.fuzzify(), true);
+
+      //assert_eq!(fuzzy.is_firedrule(1), false);
+      //assert_eq!(fuzzy.is_firedrule(2), false);
+      //assert_eq!(fuzzy.is_firedrule(3), false);
+  
+      //assert_eq!(fuzzy.defuzzify(1), 19.375); 
     }
 }
