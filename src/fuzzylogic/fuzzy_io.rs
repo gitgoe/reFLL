@@ -56,7 +56,7 @@
             }
         }
 
-        pub fn calculate_fuzzyset_pertinences(& mut self, crisp_value: f32) {
+        pub fn calculate_all_fuzzyset_pertinences(& mut self, crisp_value: f32) {
             for fs in  self.fuzzySetArray.iter_mut() {
                 fs.calculate_pertinence(crisp_value);
                 println!("calculate: {:?}", fs);

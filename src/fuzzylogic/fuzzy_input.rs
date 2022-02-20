@@ -21,7 +21,7 @@
         pub fn calculate_fuzzyset_pertinences(&mut self)-> bool {
             // call calculatePertinence for each FuzzySet
             let crisp_input = self.fuzzyIO.get_crisp_input();
-            self.fuzzyIO.calculate_fuzzyset_pertinences(crisp_input);
+            self.fuzzyIO.calculate_all_fuzzyset_pertinences(crisp_input);
             return true;
         }
     }
