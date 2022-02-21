@@ -35,7 +35,7 @@ impl FuzzyRule {
 
     // Method to evaluate the total expression
     pub fn evaluate_expression(&mut self) -> bool {
-        
+        println!("============= evaluate_expression =============");
         // check if the FuzzyRuleAntecedent and FuzzyRuleConsequent are valid
         if self.fuzzyRuleAntecedent.is_some() && self.fuzzyRuleConsequent.is_some() {
             // call the evaluator in the FuzzyRuleAntecedent

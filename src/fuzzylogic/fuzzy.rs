@@ -62,17 +62,21 @@
 
       // calculate the pertinence of all FuzzyInput objects
       // for each FuzzyInput, calculate its pertinence
-      self.fuzzyInputArray.iter_mut().map(|fi| fi.calculate_fuzzyset_pertinences());
+      self.fuzzyInputArray.iter_mut().map(|fi| fi.calculate_fuzzyset_pertinences()).collect::<Vec<_>>();
 
       // evaluate which rules were triggered
       // for each FuzzyRule, evaluate its expressions
-      self.fuzzyRuleArray.iter_mut().map(|fr| fr.evaluate_expression());
+      self.fuzzyRuleArray.iter_mut().map(|fr| fr.evaluate_expression()).collect::<Vec<_>>();
 
       // to truncate the output sets
       // for each FuzzyOutput, truncate the result
-      self.fuzzyOutputArray.iter_mut().map(|fo| fo.truncate());
+      self.fuzzyOutputArray.iter_mut().map(|fo| fo.truncate()).collect::<Vec<_>>();
 
       return true;
+    }
+
+    fn update_fuzzyset(&mut self){
+      
     }
 
     // Method to verify if one specific FuzzyRule was triggered

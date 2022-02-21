@@ -98,7 +98,7 @@
         }
 
         pub fn truncate(&mut self) -> bool {
-            
+            println!("============= truncate =============");
             // reset fuzzyComposition object
             self.fuzzyComposition.empty();
 
