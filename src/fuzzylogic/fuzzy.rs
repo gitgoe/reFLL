@@ -64,10 +64,14 @@
       // for each FuzzyInput, calculate its pertinence
       self.fuzzyInputArray.iter_mut().map(|fi| fi.calculate_fuzzyset_pertinences()).collect::<Vec<_>>();
 
+      self.update_fuzzyRule();
+
       // evaluate which rules were triggered
       // for each FuzzyRule, evaluate its expressions
       self.fuzzyRuleArray.iter_mut().map(|fr| fr.evaluate_expression()).collect::<Vec<_>>();
 
+      self.update_fuzzyOutput();
+      
       // to truncate the output sets
       // for each FuzzyOutput, truncate the result
       self.fuzzyOutputArray.iter_mut().map(|fo| fo.truncate()).collect::<Vec<_>>();
@@ -75,8 +79,26 @@
       return true;
     }
 
-    fn update_fuzzyset(&mut self){
-      
+    pub fn update_fuzzyRule(&mut self){
+      for fia in  self.fuzzyInputArray.iter() {
+        for fs in fia.fuzzyIO.fuzzySetArray.iter(){
+          println!("updated_fuzzyset : {:?}", fs);
+          for fr in self.fuzzyRuleArray.iter_mut(){
+            fr.fuzzyRuleAntecedent.as_mut().unwrap().update_fuzzysets(Some(*fs));
+          }  
+        }
+      }
+    }
+
+    pub fn update_fuzzyOutput(&mut self){
+      for fia in  self.fuzzyInputArray.iter() {
+        for fs in fia.fuzzyIO.fuzzySetArray.iter(){
+          println!("updated_fuzzyset : {:?}", fs);
+          for fo in self.fuzzyOutputArray.iter_mut(){
+            fo.update_fuzzyset(*fs);
+          }  
+        }
+      }
     }
 
     // Method to verify if one specific FuzzyRule was triggered
@@ -269,10 +291,10 @@ mod tests {
 
       assert_eq!(fuzzy.fuzzify(), true);
 
-      //assert_eq!(fuzzy.is_firedrule(1), false);
-      //assert_eq!(fuzzy.is_firedrule(2), false);
-      //assert_eq!(fuzzy.is_firedrule(3), false);
+      assert_eq!(fuzzy.is_firedrule(1), true);
+      assert_eq!(fuzzy.is_firedrule(2), true);
+      assert_eq!(fuzzy.is_firedrule(3), false);
   
-      //assert_eq!(fuzzy.defuzzify(1), 19.375); 
+      assert_eq!(fuzzy.defuzzify(1), 20.0); 
     }
 }

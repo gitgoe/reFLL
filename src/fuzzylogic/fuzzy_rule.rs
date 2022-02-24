@@ -5,10 +5,11 @@
 
 
 #[allow(non_snake_case)]
+#[derive(Debug)]
 pub struct FuzzyRule{
     index: i32,
     fired: bool,
-    fuzzyRuleAntecedent: Option<FuzzyRuleAntecedent>,
+    pub fuzzyRuleAntecedent: Option<FuzzyRuleAntecedent>,
     fuzzyRuleConsequent: Option<FuzzyRuleConsequent>,
 }
 
@@ -41,6 +42,7 @@ impl FuzzyRule {
             // call the evaluator in the FuzzyRuleAntecedent
             let power_of_antecedent = self.fuzzyRuleAntecedent.as_ref().unwrap().evaluate();
 
+            println!("--> power_of_antecedent:{}", power_of_antecedent);
             // if the power of FuzzyRuleAntecedent is bigget the 0.0, this rule was fired, else, no
             if power_of_antecedent > 0.0 {
                 self.fired = true;
@@ -50,6 +52,7 @@ impl FuzzyRule {
             // pass the power of FuzzyRuleAntecedent to FuzzyRuleConsequent by its evaluator
             self.fuzzyRuleConsequent.as_mut().unwrap().evaluate(power_of_antecedent);
         }
+        println!("fuzzyRule:{:?}", self);
         return self.fired;
     }
 

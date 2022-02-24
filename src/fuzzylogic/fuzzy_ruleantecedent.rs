@@ -8,6 +8,7 @@ const EPSILON_VALUE: f32 = 1.0E-3;
 // CONSTANTS
 // possible logic operators
 #[allow(non_camel_case_types)]
+#[derive(Debug)]
 pub enum OperatorEnum {
     AND,
     OR,
@@ -15,6 +16,7 @@ pub enum OperatorEnum {
 
 // possible join associations modes
 #[allow(non_camel_case_types)]
+#[derive(Debug)]
 pub enum ModeEnum {
     FS,
     FS_FS,
@@ -23,6 +25,7 @@ pub enum ModeEnum {
     }
 
 #[allow(non_snake_case)]
+#[derive(Debug)]
 pub struct FuzzyRuleAntecedent{
     op: OperatorEnum,
     mode: ModeEnum,
@@ -42,6 +45,21 @@ impl FuzzyRuleAntecedent {
             fuzzyRuleAntecedent1: None,
             fuzzyRuleAntecedent2: None,
         }
+    }
+
+    // update the fuzzyset if are equal
+    pub fn update_fuzzysets(&mut self, fuzzy_set: Option<FuzzySet>){
+        if fuzzy_set.is_some() {
+            if  self.fuzzySet1 == fuzzy_set{
+                println!("update_fuzzyset 1");
+                self.fuzzySet1 = fuzzy_set;
+            }
+            if self.fuzzySet2 == fuzzy_set{
+                println!("update_fuzzyset 2");
+                self.fuzzySet2 = fuzzy_set;
+            }
+        }
+       
     }
 
     // Method to create a FuzzyRuleAntecedent with just one single FuzzySet
@@ -275,6 +293,26 @@ mod tests {
 
         assert_eq!(fuzzy_ruleantecedent.join_single(Some(fuzzy_set)), true);
         assert_eq!(fuzzy_ruleantecedent.evaluate(), 0.25);  
+        
+    }
+
+    #[test]
+    fn test_update_fuzzy_set() {
+        
+        let mut fuzzy_ruleantecedent = FuzzyRuleAntecedent::new();
+        let mut fuzzy_set1:FuzzySet =  FuzzySet::new(0.0, 10.0, 10.0, 20.0);
+        fuzzy_set1.set_pertinence(0.25);
+
+        assert_eq!(fuzzy_ruleantecedent.join_single(Some(fuzzy_set1)), true);
+        let mut fuzzy_set2:FuzzySet =  FuzzySet::new(0.0, 10.0, 10.0, 20.0);
+        fuzzy_set2.set_pertinence(0.5);
+
+        assert_eq!(fuzzy_ruleantecedent.fuzzySet1.unwrap().get_pertinence() == 0.25, true);  
+
+        fuzzy_ruleantecedent.update_fuzzysets(Some(fuzzy_set2));
+
+        assert_eq!(fuzzy_ruleantecedent.fuzzySet1.unwrap().get_pertinence() == 0.50, true);  
+        
     }
 
     #[test]

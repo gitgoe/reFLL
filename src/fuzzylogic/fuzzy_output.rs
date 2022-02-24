@@ -12,7 +12,7 @@
     pub struct FuzzyOutput{
         index: i32,
         fuzzyComposition:FuzzyComposition,
-        fuzzyIO: FuzzyIO
+        pub fuzzyIO: FuzzyIO
     } 
 
     impl Deref for FuzzyOutput {

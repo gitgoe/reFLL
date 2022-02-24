@@ -9,6 +9,12 @@
         pertinence: f32
     }
 
+    impl PartialEq for FuzzySet {
+        fn eq(&self, other: &FuzzySet) -> bool {
+            self.a == other.a && self.b == other.b && self.c == other.c && self.d == other.d
+        }
+    }
+
     impl FuzzySet {
 
         pub fn new(a: f32, b: f32, c: f32, d: f32) -> FuzzySet {
@@ -119,6 +125,16 @@ mod tests {
         assert_eq!(fuzzy_set.get_pointb(), 10.0);
         assert_eq!(fuzzy_set.get_pointc(), 20.0);
         assert_eq!(fuzzy_set.get_pointd(), 30.0);
+    } 
+
+    #[test]
+    pub fn test_patialEq() {
+        let mut fuzzy_set1:FuzzySet =  FuzzySet::new(0.0, 10.0, 20.0, 30.0);
+        fuzzy_set1.set_pertinence(5.0);
+
+        let mut fuzzy_set2:FuzzySet =  FuzzySet::new(0.0, 10.0, 20.0, 30.0);
+        fuzzy_set2.set_pertinence(10.0);
+        assert_eq!(fuzzy_set1 == fuzzy_set2, true);
     } 
 
     #[test]

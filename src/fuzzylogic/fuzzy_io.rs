@@ -38,6 +38,15 @@
             self.fuzzySetArray.push(fuzzy_set);
             return self.fuzzySetArray.len()
         }
+ 
+        pub fn update_fuzzyset(&mut self, fuzzy_set: FuzzySet){
+            for fs in self.fuzzySetArray.iter_mut() {
+                if *fs == fuzzy_set {
+                    println!("fuzzy_output update_fuzzyset: {:?}", fs);
+                    *fs = fuzzy_set;
+                }
+            }
+        }
 
         pub fn fuzzyset(&mut self, pos: usize) -> FuzzySet {
             let array =  &*self.fuzzySetArray;
