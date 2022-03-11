@@ -1,0 +1,1156 @@
+/*
+ * Robotic Research Group (RRG)
+ * State University of Piauí (UESPI), Brazil - Piauí - Teresina
+ *
+ * FuzzySet.h
+ *
+ *      Author: AJ Alves <aj.alves@zerokol.com>
+ *          Co authors: Dr. Ricardo Lira <ricardor_usp@yahoo.com.br>
+ *                      Msc. Marvin Lemos <marvinlemos@gmail.com>
+ *                      Douglas S. Kridi <douglaskridi@gmail.com>
+ *                      Kannya Leal <kannyal@hotmail.com>
+ */
+ 
+ #include <iostream>
+#ifndef FUZZYSET_H
+#define FUZZYSET_H
+
+class FuzzySet
+{
+public:
+  // CONTRUCTORS
+  FuzzySet();
+  FuzzySet(float a, float b, float c, float d);
+  // PUBLIC METHODS
+  float getPointA();
+  float getPointB();
+  float getPointC();
+  float getPointD();
+  bool calculatePertinence(float crispValue);
+  void setPertinence(float pertinence);
+  float getPertinence();
+  void reset();
+
+private:
+  // PRIVATE VARIABLES
+  float a;
+  float b;
+  float c;
+  float d;
+  float pertinence;
+};
+#endif
+
+/*
+ * Robotic Research Group (RRG)
+ * State University of Piauí (UESPI), Brazil - Piauí - Teresina
+ *
+ * FuzzySet.cpp
+ *
+ *      Author: AJ Alves <aj.alves@zerokol.com>
+ *          Co authors: Dr. Ricardo Lira <ricardor_usp@yahoo.com.br>
+ *                      Msc. Marvin Lemos <marvinlemos@gmail.com>
+ *                      Douglas S. Kridi <douglaskridi@gmail.com>
+ *                      Kannya Leal <kannyal@hotmail.com>
+ */
+
+
+// CONTRUCTORS
+FuzzySet::FuzzySet()
+{
+}
+
+FuzzySet::FuzzySet(float a, float b, float c, float d)
+{
+    this->a = a;
+    this->b = b;
+    this->c = c;
+    this->d = d;
+    this->pertinence = 0.0;
+}
+
+// PUBLIC METHODS
+
+// Method to get the value of point A
+float FuzzySet::getPointA()
+{
+    return this->a;
+}
+
+// Method to get the value of point B
+float FuzzySet::getPointB()
+{
+    return this->b;
+}
+
+// Method to get the value of point C
+float FuzzySet::getPointC()
+{
+    return this->c;
+}
+
+// Method to get the value of point D
+float FuzzySet::getPointD()
+{
+    return this->d;
+}
+
+// Method to calculate the pertinence of the FuzzySet, according with the crispValue
+bool FuzzySet::calculatePertinence(float crispValue)
+{
+    // check the crispValue is small then A
+    if (crispValue < this->a)
+    {
+        // check if this FuzzySet represents "everithing small is true"
+        if (this->a == this->b && this->b != this->c && this->c != this->d)
+        {
+            // if so, the pertinence is 1
+            this->pertinence = 1.0;
+        }
+        else
+        {
+            // else, pertinence is 0
+            this->pertinence = 0.0;
+        }
+    }
+    // check if the crispValue is between A and B
+    else if (crispValue >= this->a && crispValue < this->b)
+    {
+        // calculate a slope
+        float slope = 1.0 / (this->b - this->a);
+        // calculate the value of pertinence
+        this->pertinence = slope * (crispValue - this->b) + 1.0;
+    }
+    // check if the pertinence is between B and C
+    else if (crispValue >= this->b && crispValue <= this->c)
+    {
+        this->pertinence = 1.0;
+    }
+    // check if the pertinence is between C and D
+    else if (crispValue > this->c && crispValue <= this->d)
+    {
+        // calculate a slope
+        float slope = 1.0 / (this->c - this->d);
+        // calculate the value of pertinence
+        this->pertinence = slope * (crispValue - this->c) + 1.0;
+    }
+    // check the crispValue is bigger then D
+    else if (crispValue > this->d)
+    {
+        // check if this FuzzySet represents "everithing bigger is true"
+        if (this->c == this->d && this->c != this->b && this->b != this->a)
+        {
+            // if so, the pertinence is 1
+            this->pertinence = 1.0;
+        }
+        else
+        {
+            // else, pertinence is 0
+            this->pertinence = 0.0;
+        }
+    }
+    return true;
+}
+
+// Method to set the value of pertinence
+void FuzzySet::setPertinence(float pertinence)
+{
+    // check if the new pertinence is bigger then the current value because it can be called more then once by different FuzzyRuleConsequent
+    if (this->pertinence < pertinence)
+    {
+        this->pertinence = pertinence;
+    }
+}
+
+// Method to get the value of pertinence
+float FuzzySet::getPertinence()
+{
+    return this->pertinence;
+}
+
+// Method to reset the value of pertinence
+void FuzzySet::reset()
+{
+    this->pertinence = 0.0;
+}
+
+
+/*
+ * Robotic Research Group (RRG)
+ * State University of Piauí (UESPI), Brazil - Piauí - Teresina
+ *
+ * FuzzyIO.h
+ *
+ *      Author: AJ Alves <aj.alves@zerokol.com>
+ *          Co authors: Dr. Ricardo Lira <ricardor_usp@yahoo.com.br>
+ *                      Msc. Marvin Lemos <marvinlemos@gmail.com>
+ *                      Douglas S. Kridi <douglaskridi@gmail.com>
+ *                      Kannya Leal <kannyal@hotmail.com>
+ */
+#ifndef FUZZYIO_H
+#define FUZZYIO_H
+
+// IMPORTING NECESSARY LIBRARIES
+#include <stdlib.h>
+
+
+// Array struct for FuzzySet objects
+struct fuzzySetArray
+{
+  FuzzySet *fuzzySet;
+  fuzzySetArray *next;
+};
+
+class FuzzyIO
+{
+public:
+  // CONTRUCTORS
+  FuzzyIO();
+  FuzzyIO(int index);
+  // DESTRUCTOR
+  ~FuzzyIO();
+  // PUBLIC METHODS
+  int getIndex();
+  void setCrispInput(float crispInput);
+  float getCrispInput();
+  bool addFuzzySet(FuzzySet *fuzzySet);
+  void resetFuzzySets();
+
+protected:
+  // PROTECTED VARIABLES
+  int index;
+  float crispInput;
+  fuzzySetArray *fuzzySets;
+
+  // PROTECTED METHODS
+  void cleanFuzzySets(fuzzySetArray *aux);
+};
+#endif
+
+/*
+ * Robotic Research Group (RRG)
+ * State University of Piauí (UESPI), Brazil - Piauí - Teresina
+ *
+ * FuzzyIO.cpp
+ *
+ *      Author: AJ Alves <aj.alves@zerokol.com>
+ *          Co authors: Dr. Ricardo Lira <ricardor_usp@yahoo.com.br>
+ *                      Msc. Marvin Lemos <marvinlemos@gmail.com>
+ *                      Douglas S. Kridi <douglaskridi@gmail.com>
+ *                      Kannya Leal <kannyal@hotmail.com>
+ */
+
+
+// CONTRUCTORS
+FuzzyIO::FuzzyIO()
+{
+}
+
+FuzzyIO::FuzzyIO(int index)
+{
+    this->index = index;
+    this->crispInput = 0.0;
+    // Initializing pointers with NULL
+    this->fuzzySets = NULL;
+}
+
+// DESTRUCTOR
+FuzzyIO::~FuzzyIO()
+{
+    this->cleanFuzzySets(this->fuzzySets);
+}
+
+// PUBLIC METHODS
+
+// Method to get the value of index
+int FuzzyIO::getIndex()
+{
+    return this->index;
+}
+
+// Method to set the value of crispInput
+void FuzzyIO::setCrispInput(float crispInput)
+{
+    this->crispInput = crispInput;
+}
+
+// Method to get the value of crispInput
+float FuzzyIO::getCrispInput()
+{
+    return this->crispInput;
+}
+
+// Method to include a new FuzzySet into FuzzyIO
+bool FuzzyIO::addFuzzySet(FuzzySet *fuzzySet)
+{
+    // auxiliary variable to handle the operation
+    fuzzySetArray *newOne;
+    // allocating in memory
+    if ((newOne = (fuzzySetArray *)malloc(sizeof(fuzzySetArray))) == NULL)
+    {
+        // return false if in out of memory
+        return false;
+    }
+    // building the object
+    newOne->fuzzySet = fuzzySet;
+    newOne->next = NULL;
+    // if it is the first FuzzySet, set it as the head
+    if (this->fuzzySets == NULL)
+    {
+        this->fuzzySets = newOne;
+    }
+    else
+    {
+        // auxiliary variable to handle the operation
+        fuzzySetArray *aux = this->fuzzySets;
+        // find the last element of the array
+        while (aux != NULL)
+        {
+            if (aux->next == NULL)
+            {
+                // make the relations between them
+                aux->next = newOne;
+                return true;
+            }
+            aux = aux->next;
+        }
+    }
+    return true;
+}
+
+// Method to reset all FuzzySet of this collection
+void FuzzyIO::resetFuzzySets()
+{
+    // auxiliary variable to handle the operation
+    fuzzySetArray *fuzzySetsAux = this->fuzzySets;
+    // while not in the end of the array, iterate
+    while (fuzzySetsAux != NULL)
+    {
+        fuzzySetsAux->fuzzySet->reset();
+        fuzzySetsAux = fuzzySetsAux->next;
+    }
+}
+
+// PROTECTED METHODS
+
+// Method to recursively clean all FuzzySet from memory
+void FuzzyIO::cleanFuzzySets(fuzzySetArray *aux)
+{
+    if (aux != NULL)
+    {
+        this->cleanFuzzySets(aux->next);
+        // emptying allocated memory
+        free(aux);
+    }
+}
+
+/*
+ * Robotic Research Group (RRG)
+ * State University of Piauí (UESPI), Brazil - Piauí - Teresina
+ *
+ * FuzzyInput.h
+ *
+ *      Author: AJ Alves <aj.alves@zerokol.com>
+ *          Co authors: Dr. Ricardo Lira <ricardor_usp@yahoo.com.br>
+ *                      Msc. Marvin Lemos <marvinlemos@gmail.com>
+ *                      Douglas S. Kridi <douglaskridi@gmail.com>
+ *                      Kannya Leal <kannyal@hotmail.com>
+ */
+#ifndef FUZZYINPUT_H
+#define FUZZYINPUT_H
+
+// IMPORTING NECESSARY LIBRARIES
+
+
+class FuzzyInput : public FuzzyIO
+{
+public:
+  // CONTRUCTORS
+  FuzzyInput();
+  FuzzyInput(int index);
+  // DESTRUCTOR
+  ~FuzzyInput();
+  // PUBLIC METHODS
+  bool calculateFuzzySetPertinences();
+};
+#endif
+
+/*
+ * Robotic Research Group (RRG)
+ * State University of Piauí (UESPI), Brazil - Piauí - Teresina
+ *
+ * FuzzyInput.cpp
+ *
+ *      Author: AJ Alves <aj.alves@zerokol.com>
+ *          Co authors: Dr. Ricardo Lira <ricardor_usp@yahoo.com.br>
+ *                      Msc. Marvin Lemos <marvinlemos@gmail.com>
+ *                      Douglas S. Kridi <douglaskridi@gmail.com>
+ *                      Kannya Leal <kannyal@hotmail.com>
+ */
+
+
+// CONTRUCTORS
+FuzzyInput::FuzzyInput() : FuzzyIO()
+{
+    // no custom construction, using the father (FuzzyIO) constructor
+}
+
+FuzzyInput::FuzzyInput(int index) : FuzzyIO(index)
+{
+    // no custom construction, using the father (FuzzyIO) constructor
+}
+
+// DESTRUCTOR
+FuzzyInput::~FuzzyInput()
+{
+    // no custom destruction, using the father (FuzzyIO) destructor
+}
+
+// PUBLIC METHODS
+
+// Method to calculate the pertinence of all FuzzySet
+bool FuzzyInput::calculateFuzzySetPertinences()
+{
+    // auxiliary variable to handle the operation
+    fuzzySetArray *aux = this->fuzzySets;
+    // while not in the end of the array, iterate
+    while (aux != NULL)
+    {
+        // call calculatePertinence for each FuzzySet
+        aux->fuzzySet->calculatePertinence(this->crispInput);
+        aux = aux->next;
+    }
+    return true;
+}
+
+/*
+ * Robotic Research Group (RRG)
+ * State University of Piauí (UESPI), Brazil - Piauí - Teresina
+ *
+ * FuzzyComposition.h
+ *
+ *      Author: AJ Alves <aj.alves@zerokol.com>
+ *          Co authors: Dr. Ricardo Lira <ricardor_usp@yahoo.com.br>
+ *                      Msc. Marvin Lemos <marvinlemos@gmail.com>
+ *                      Douglas S. Kridi <douglaskridi@gmail.com>
+ *                      Kannya Leal <kannyal@hotmail.com>
+ */
+#ifndef FUZZYCOMPOSITION_H
+#define FUZZYCOMPOSITION_H
+
+// IMPORTING NECESSARY LIBRARIES
+#include <stdlib.h>
+
+// CONSTANTS
+#define EPSILON_VALUE 1.0E-3
+
+// Array struct for points objects
+struct pointsArray
+{
+  pointsArray *previous;
+  float point;
+  float pertinence;
+  pointsArray *next;
+};
+
+class FuzzyComposition
+{
+public:
+  // CONTRUCTORS
+  FuzzyComposition();
+  // DESTRUCTOR
+  ~FuzzyComposition();
+  // PUBLIC METHODS
+  bool addPoint(float point, float pertinence);
+  bool checkPoint(float point, float pertinence);
+  bool build();
+  float calculate();
+  bool empty();
+  int countPoints();
+
+private:
+  // PRIVATE VARIABLES
+  pointsArray *points;
+
+  // PRIVATE METHODS
+  void cleanPoints(pointsArray *aux);
+  bool rebuild(pointsArray *aSegmentBegin, pointsArray *aSegmentEnd, pointsArray *bSegmentBegin, pointsArray *bSegmentEnd);
+  bool rmvPoint(pointsArray *point);
+};
+#endif
+
+/*
+ * Robotic Research Group (RRG)
+ * State University of Piauí (UESPI), Brazil - Piauí - Teresina
+ *
+ * FuzzyComposition.cpp
+ *
+ *      Author: AJ Alves <aj.alves@zerokol.com>
+ *          Co authors: Dr. Ricardo Lira <ricardor_usp@yahoo.com.br>
+ *                      Msc. Marvin Lemos <marvinlemos@gmail.com>
+ *                      Douglas S. Kridi <douglaskridi@gmail.com>
+ *                      Kannya Leal <kannyal@hotmail.com>
+ */
+
+#include <math.h>
+
+// CONTRUCTORS
+FuzzyComposition::FuzzyComposition()
+{
+    this->points = NULL;
+}
+
+// DESTRUCTOR
+FuzzyComposition::~FuzzyComposition()
+{
+    this->cleanPoints(this->points);
+}
+
+// Method to include a new pointsArray struct into FuzzyComposition
+bool FuzzyComposition::addPoint(float point, float pertinence)
+{
+    // auxiliary variable to handle the operation
+    pointsArray *newOne;
+    // allocating in memory
+    if ((newOne = (pointsArray *)malloc(sizeof(pointsArray))) == NULL)
+    {
+        // return false if in out of memory
+        return false;
+    }
+    // populate the struct
+    newOne->previous = NULL;
+    newOne->point = point;
+    newOne->pertinence = pertinence;
+    newOne->next = NULL;
+    // if it is the first pointsArray, set it as the head
+    if (this->points == NULL)
+    {
+        this->points = newOne;
+    }
+    else
+    {
+        // auxiliary variable to handle the operation
+        pointsArray *aux = this->points;
+        // find the last element of the array
+        while (aux != NULL)
+        {
+            if (aux->next == NULL)
+            {
+                // make the relations between them
+                newOne->previous = aux;
+                aux->next = newOne;
+                return true;
+            }
+            aux = aux->next;
+        }
+    }
+    return true;
+}
+
+// Method to check if FuzzyComposition contains an specific point and pertinence
+bool FuzzyComposition::checkPoint(float point, float pertinence)
+{
+    // auxiliary variable to handle the operation
+    pointsArray *aux = this->points;
+    // while not in the end of the array, iterate
+    while (aux != NULL)
+    {
+        // if params match with this point
+        if (aux->point == point && aux->pertinence == pertinence)
+        {
+            return true;
+        }
+        aux = aux->next;
+    }
+    return false;
+}
+
+// Method to iterate over the pointsArray, detect possible intersections and sent these points for "correction"
+bool FuzzyComposition::build()
+{
+    // auxiliary variable to handle the operation, instantiate with the first element from array
+    pointsArray *aux = this->points;
+    // while not in the end of the array, iterate
+    while (aux != NULL)
+    {
+        // another auxiliary variable to handle the operation
+        pointsArray *temp = aux;
+        // while not in the beginning of the array, iterate
+        while (temp->previous != NULL)
+        {
+            // if the previous point is greater then the current
+            if (aux->point < temp->point)
+            {
+                // if yes, break an use this point
+                break;
+            }
+            temp = temp->previous;
+        }
+        // iterate over the previous pointsArray
+        while (temp->previous != NULL)
+        {
+            // if previous of previous point is not NULL, and some intersection was fixed by rebuild
+            if (this->rebuild(aux, aux->next, temp, temp->previous) == true)
+            {
+                // move the first auxiliary to beginning of the array for a new validation, and breaks
+                aux = this->points;
+                break;
+            }
+            temp = temp->previous;
+        }
+        aux = aux->next;
+    }
+    return true;
+}
+
+// Method to calculate the center of the area of this FuzzyComposition
+float FuzzyComposition::calculate()
+{
+    // auxiliary variable to handle the operation, instantiate with the first element from array
+    pointsArray *aux = this->points;
+    float numerator = 0.0;
+    float denominator = 0.0;
+    // while not in the end of the array, iterate
+    while (aux != NULL && aux->next != NULL)
+    {
+        float area = 0.0;
+        float middle = 0.0;
+        // if it is a singleton
+        if (aux->pertinence != aux->next->pertinence && aux->point == aux->next->point)
+        {
+            // enter in all points of singleton, but calculate only once
+            if (aux->pertinence > 0.0)
+            {
+                area = aux->pertinence;
+                middle = aux->point;
+            }
+        }
+        // if a triangle (Not properly a membership function)
+        else if (aux->pertinence == 0.0 || aux->next->pertinence == 0.0)
+        {
+            float pertinence;
+            if (aux->pertinence > 0.0)
+            {
+                pertinence = aux->pertinence;
+            }
+            else
+            {
+                pertinence = aux->next->pertinence;
+            }
+            area = ((aux->next->point - aux->point) * pertinence) / 2.0;
+            if (aux->pertinence < aux->next->pertinence)
+            {
+                middle = ((aux->next->point - aux->point) / 1.5) + aux->point;
+            }
+            else
+            {
+                middle = ((aux->next->point - aux->point) / 3.0) + aux->point;
+            }
+        }
+        // else if a square (Not properly a membership function)
+        else if ((aux->pertinence > 0.0 && aux->next->pertinence > 0.0) && aux->pertinence == aux->next->pertinence)
+        {
+            area = (aux->next->point - aux->point) * aux->pertinence;
+            middle = ((aux->next->point - aux->point) / 2.0) + aux->point;
+        }
+        // else if a trapeze (Not properly a membership function)
+        else if ((aux->pertinence > 0.0 && aux->next->pertinence > 0.0) && aux->pertinence != aux->next->pertinence)
+        {
+            area = ((aux->pertinence + aux->next->pertinence) / 2.0) * (aux->next->point - aux->point);
+            middle = ((aux->next->point - aux->point) / 2.0) + aux->point;
+        }
+        numerator += middle * area;
+        denominator += area;
+        aux = aux->next;
+    }
+    // avoiding zero division
+    if (denominator == 0.0)
+    {
+        return 0.0;
+    }
+    else
+    {
+        return numerator / denominator;
+    }
+}
+
+// Method to reset the Object
+bool FuzzyComposition::empty()
+{
+    // clean all pointsArray from memory
+    this->cleanPoints(this->points);
+    // reset the pointer
+    this->points = NULL;
+    return true;
+}
+
+// Method to count the amount of points used in this FuzzyComposition
+int FuzzyComposition::countPoints()
+{
+    // variable to hold the count
+    int count = 0;
+    // auxiliary variable to handle the operation
+    pointsArray *aux = this->points;
+    // while not in the end of the array, iterate
+    while (aux != NULL)
+    {
+        count = count + 1;
+        aux = aux->next;
+    }
+    return count;
+}
+
+// PRIVATE METHODS
+
+// Method to recursively clean all pointsArray structs from memory
+void FuzzyComposition::cleanPoints(pointsArray *aux)
+{
+    if (aux != NULL)
+    {
+        this->cleanPoints(aux->next);
+        // emptying allocated memory
+        free(aux);
+    }
+}
+
+// Method to search intersection between two segments, if found, create a new pointsArray (in found intersection) and remove not necessary ones
+bool FuzzyComposition::rebuild(pointsArray *aSegmentBegin, pointsArray *aSegmentEnd, pointsArray *bSegmentBegin, pointsArray *bSegmentEnd)
+{
+    // create a reference for each point
+    float x1 = aSegmentBegin->point;
+    float y1 = aSegmentBegin->pertinence;
+    float x2 = aSegmentEnd->point;
+    float y2 = aSegmentEnd->pertinence;
+    float x3 = bSegmentBegin->point;
+    float y3 = bSegmentBegin->pertinence;
+    float x4 = bSegmentEnd->point;
+    float y4 = bSegmentEnd->pertinence;
+    
+    std::cout<<"x1: "<<x1<<"   y1: "<<y1<<"\n";
+    std::cout<<"x2: "<<x2<<"   y2: "<<y2<<"\n";
+    std::cout<<"x3: "<<x3<<"   y3: "<<y3<<"\n";
+    std::cout<<"x4: "<<x4<<"   y4: "<<y4<<"\n";
+    std::cout<<"==================================="<<"\n";
+    
+    // calculate the denominator and numerator
+    float denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+    float numera = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
+    float numerb = (x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3);
+    // if negative, convert to positive
+    if (denom < 0.0)
+    {
+        denom *= -1.0;
+    }
+    // If the denominator is zero or close to it, it means that the lines are parallels, so return false for intersection
+    if (denom < EPSILON_VALUE)
+    {
+        // return false for intersection
+        return false;
+    }
+    // if negative, convert to positive
+    if (numera < 0.0)
+    {
+        numera *= -1.0;
+    }
+    // if negative, convert to positive
+    if (numerb < 0.0)
+    {
+        numerb *= -1.0;
+    }
+    // verify if has intersection between the segments
+    float mua = numera / denom;
+    float mub = numerb / denom;
+    if (mua <= 0.0 || mua >= 1.0 || mub <= 0.0 || mub >= 1.0)
+    {
+        // return false for intersection
+        return false;
+    }
+    else
+    {
+        // we found an intersection
+        // auxiliary variable to handle the operation
+        pointsArray *aux;
+        // allocating in memory
+        if ((aux = (pointsArray *)malloc(sizeof(pointsArray))) == NULL)
+        {
+            // return false if in out of memory
+            return false;
+        }
+        // calculate the point (y) and its pertinence (y) for the new element (pointsArray)
+        aux->previous = bSegmentEnd;
+        aux->point = x1 + mua * (x2 - x1);
+        aux->pertinence = y1 + mua * (y2 - y1);
+        aux->next = aSegmentEnd;
+        // changing pointsArray to accomplish with new state
+        aSegmentBegin->next = aux;
+        aSegmentEnd->previous = aux;
+        bSegmentBegin->previous = aux;
+        bSegmentEnd->next = aux;
+        // initiate a proccess of remotion of not needed pointsArray
+        // some variables to help in this proccess, the start pointsArray
+        pointsArray *temp = bSegmentBegin;
+        // do, while
+        do
+        {
+            // hold next
+            pointsArray *excl = temp->next;
+            // remove it from array
+            this->rmvPoint(temp);
+            // set new current
+            temp = excl;
+            // check if it is the stop pointsArray
+            if (temp != NULL && temp->point == aux->point && temp->pertinence == aux->pertinence)
+            {
+                // if true, stop the deletions
+                break;
+            }
+        } while (temp != NULL);
+        return true;
+    }
+}
+
+// Function to remove (deallocate) some pointsArray
+bool FuzzyComposition::rmvPoint(pointsArray *point)
+{
+    if (point != NULL)
+    {
+        // emptying allocated memory
+        free(point);
+    }
+    return true;
+}
+
+/*
+ * Robotic Research Group (RRG)
+ * State University of Piauí (UESPI), Brazil - Piauí - Teresina
+ *
+ * FuzzyOutput.h
+ *
+ *      Author: AJ Alves <aj.alves@zerokol.com>
+ *          Co authors: Dr. Ricardo Lira <ricardor_usp@yahoo.com.br>
+ *                      Msc. Marvin Lemos <marvinlemos@gmail.com>
+ *                      Douglas S. Kridi <douglaskridi@gmail.com>
+ *                      Kannya Leal <kannyal@hotmail.com>
+ */
+#ifndef FUZZYOUTPUT_H
+#define FUZZYOUTPUT_H
+
+
+class FuzzyOutput : public FuzzyIO
+{
+public:
+  // CONTRUCTORS
+  FuzzyOutput();
+  FuzzyOutput(int index);
+  // DESTRUCTOR
+  ~FuzzyOutput();
+  // PUBLIC METHODS
+  bool truncate();
+  float getCrispOutput();
+  bool order();
+  FuzzyComposition *getFuzzyComposition();
+
+private:
+  // PRIVATE VARIABLES
+  FuzzyComposition *fuzzyComposition;
+
+  // PRIVATE METHODS
+  bool swap(fuzzySetArray *fuzzySetA, fuzzySetArray *fuzzySetB);
+  bool rebuild(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float *point, float *pertinence);
+};
+#endif
+
+/*
+ * Robotic Research Group (RRG)
+ * State University of Piauí (UESPI), Brazil - Piauí - Teresina
+ *
+ * FuzzyOutput.cpp
+ *
+ *      Author: AJ Alves <aj.alves@zerokol.com>
+ *          Co authors: Dr. Ricardo Lira <ricardor_usp@yahoo.com.br>
+ *                      Msc. Marvin Lemos <marvinlemos@gmail.com>
+ *                      Douglas S. Kridi <douglaskridi@gmail.com>
+ *                      Kannya Leal <kannyal@hotmail.com>
+ */
+
+
+// CONTRUCTORS
+FuzzyOutput::FuzzyOutput() : FuzzyIO()
+{
+    // instantiating a FuzzyComposition object
+    this->fuzzyComposition = new FuzzyComposition();
+}
+
+FuzzyOutput::FuzzyOutput(int index) : FuzzyIO(index)
+{
+    // instantiating a FuzzyComposition object
+    this->fuzzyComposition = new FuzzyComposition();
+}
+
+// DESTRUCTOR
+FuzzyOutput::~FuzzyOutput()
+{
+    // reset fuzzyComposition object
+    this->fuzzyComposition->empty();
+}
+
+// PUBLIC METHODS
+
+bool FuzzyOutput::truncate()
+{
+    // reset fuzzyComposition object
+    this->fuzzyComposition->empty();
+    // auxiliary variable to handle the operation
+    fuzzySetArray *aux = this->fuzzySets;
+    // while not in the end of the array, iterate
+    while (aux != NULL)
+    {
+        std::cout<<"fuzzyComposition aux:"<< this->fuzzyComposition->countPoints() <<"\n";
+        
+        // if the FuzzySet was trigged (has some pertinence)
+        if (aux->fuzzySet->getPertinence() > 0.0)
+        {
+            // Check if it is not a "trapeze" without its left triangle or singleton, before include the point A
+            if (aux->fuzzySet->getPointA() != aux->fuzzySet->getPointB())
+            {
+                // include it
+                this->fuzzyComposition->addPoint(aux->fuzzySet->getPointA(), 0.0);
+            }
+            // check if it is a triangle (B == C) and (A <> D)
+            if (aux->fuzzySet->getPointB() == aux->fuzzySet->getPointC() && aux->fuzzySet->getPointA() != aux->fuzzySet->getPointD())
+            {
+                // check if the pertinence is the max
+                if (aux->fuzzySet->getPertinence() == 1.0)
+                {
+                    // include it (it will replace previous point if left triangle)
+                    this->fuzzyComposition->addPoint(aux->fuzzySet->getPointB(), aux->fuzzySet->getPertinence());
+                    // include it (it will replace previous point if right triangle)
+                    this->fuzzyComposition->addPoint(aux->fuzzySet->getPointD(), 0.0);
+                }
+                // if the pertinence is below the max, and it is a triangle, calculate the new point B and C
+                else
+                {
+                    // rebuild the new point finding the intersection of two lines, the first is the segment from A to B (pertinence here is the y) and the segment of truncate, from A to D
+                    // initiate a new point with current values of B (here it does matters, it always will be changed)
+                    float newPointB = aux->fuzzySet->getPointB();
+                    float newPertinenceB = aux->fuzzySet->getPertinence();
+                    // only if a regular triangle
+                    this->rebuild(aux->fuzzySet->getPointA(), 0.0, aux->fuzzySet->getPointB(), 1.0, aux->fuzzySet->getPointA(), aux->fuzzySet->getPertinence(), aux->fuzzySet->getPointD(), aux->fuzzySet->getPertinence(), &newPointB, &newPertinenceB);
+                    // include it
+                    this->fuzzyComposition->addPoint(newPointB, newPertinenceB);
+                    // rebuild the new point finding the intersection of two lines, the second is the segment from C to D (pertinence here is the y) and the segment of truncate, from A to D
+                    // initiate a new point with current values of C (here it does matters, it always will be changed)
+                    float newPointC = aux->fuzzySet->getPointC();
+                    float newPertinenceC = aux->fuzzySet->getPertinence();
+                    // only if a regular triangle
+                    this->rebuild(aux->fuzzySet->getPointC(), 1.0, aux->fuzzySet->getPointD(), 0.0, aux->fuzzySet->getPointA(), aux->fuzzySet->getPertinence(), aux->fuzzySet->getPointD(), aux->fuzzySet->getPertinence(), &newPointC, &newPertinenceC);
+                    // include it
+                    this->fuzzyComposition->addPoint(newPointC, newPertinenceC);
+                }
+            }
+            // if until now, it was not a triangle
+            // check if (B <> C), if true, it is a trapeze (this code is the same of the triangle, except when the pertinence is 1.0, here we include the two points [B and C], because they are not equal)
+            else if (aux->fuzzySet->getPointB() != aux->fuzzySet->getPointC())
+            {
+                // check if the pertinence is the max
+                if (aux->fuzzySet->getPertinence() == 1.0)
+                {
+                    // include it
+                    this->fuzzyComposition->addPoint(aux->fuzzySet->getPointB(), aux->fuzzySet->getPertinence());
+                    // include it
+                    this->fuzzyComposition->addPoint(aux->fuzzySet->getPointC(), aux->fuzzySet->getPertinence());
+                }
+                // if the pertinence is below the max, and it is a triangle, calculate the new point B and C
+                else
+                {
+                    // initiate a new point with current values of B
+                    float newPointB = aux->fuzzySet->getPointB();
+                    float newPertinenceB = aux->fuzzySet->getPertinence();
+                    // rebuild the new point finding the intersection of two lines, the first is the segment from A to B (pertinence here is the y) and the segment of truncate, from A to D
+                    this->rebuild(aux->fuzzySet->getPointA(), 0.0, aux->fuzzySet->getPointB(), 1.0, aux->fuzzySet->getPointA(), aux->fuzzySet->getPertinence(), aux->fuzzySet->getPointD(), aux->fuzzySet->getPertinence(), &newPointB, &newPertinenceB);
+                    // include it
+                    this->fuzzyComposition->addPoint(newPointB, newPertinenceB);
+                    // initiate a new point with current values of C
+                    float newPointC = aux->fuzzySet->getPointC();
+                    float newPertinenceC = aux->fuzzySet->getPertinence();
+                    // rebuild the new point finding the intersection of two lines, the first is the segment from C to D (pertinence here is the y) and the segment of truncate, from A to D
+                    this->rebuild(aux->fuzzySet->getPointC(), 1.0, aux->fuzzySet->getPointD(), 0.0, aux->fuzzySet->getPointA(), aux->fuzzySet->getPertinence(), aux->fuzzySet->getPointD(), aux->fuzzySet->getPertinence(), &newPointC, &newPertinenceC);
+                    // include it
+                    this->fuzzyComposition->addPoint(newPointC, newPertinenceC);
+                }
+            }
+            // if it is not a triangle non a trapeze, it is a singleton
+            else
+            {
+                // include it
+                this->fuzzyComposition->addPoint(aux->fuzzySet->getPointB(), 0.0);
+                // include it
+                this->fuzzyComposition->addPoint(aux->fuzzySet->getPointB(), aux->fuzzySet->getPertinence());
+                // include it
+                this->fuzzyComposition->addPoint(aux->fuzzySet->getPointB(), 0.0);
+            }
+            // Check if it is not a "trapeze" without its right triangle or singleton, before include the point D
+            if (aux->fuzzySet->getPointC() != aux->fuzzySet->getPointD())
+            {
+                // include it
+                this->fuzzyComposition->addPoint(aux->fuzzySet->getPointD(), 0.0);
+            }
+        }
+        aux = aux->next;
+    }
+    std::cout<<"before fuzzyComposition aux:"<< this->fuzzyComposition->countPoints() <<"\n";
+    // call build from FuzzyComposition for its self building
+    this->fuzzyComposition->build();
+    std::cout<<"after fuzzyComposition aux:"<< this->fuzzyComposition->countPoints() <<"\n";
+    return true;
+}
+
+// Method to run the calculate of FuzzyComposition and return the result
+float FuzzyOutput::getCrispOutput()
+{
+    return this->fuzzyComposition->calculate();
+}
+
+// Method to sort the FuzzySet by the reference of the point A in an ascending order
+// It is just a simple Bubble Sort
+bool FuzzyOutput::order()
+{
+    // instantiating some auxiliary variables
+    fuzzySetArray *aux1 = this->fuzzySets;
+    fuzzySetArray *aux2 = this->fuzzySets;
+    // while not in the end of the array, iterate
+    while (aux1 != NULL)
+    {
+        // iterate again to ensure all matches, for the worst case (complet inversion)
+        while (aux2 != NULL)
+        {
+            // check if not in the last element
+            if (aux2->next != NULL)
+            {
+                // check if the point from the first is bigger the the second
+                if (aux2->fuzzySet->getPointA() > aux2->next->fuzzySet->getPointA())
+                {
+                    // if true, swap the FuzzySet
+                    this->swap(aux2, aux2->next);
+                }
+            }
+            aux2 = aux2->next;
+        }
+        // restarting the second auxiliary variable
+        aux2 = this->fuzzySets;
+        aux1 = aux1->next;
+    }
+    return true;
+}
+
+// Method to get the value (pointer) of fuzzyComposition
+FuzzyComposition *FuzzyOutput::getFuzzyComposition()
+{
+    return this->fuzzyComposition;
+}
+
+// PRIVATE METHODS
+
+// Method to invert the values (references) of two FuzzySet
+bool FuzzyOutput::swap(fuzzySetArray *fuzzySetA, fuzzySetArray *fuzzySetB)
+{
+    // put the first into an auxiliary variable
+    FuzzySet *aux = fuzzySetA->fuzzySet;
+    // put the second into the first
+    fuzzySetA->fuzzySet = fuzzySetB->fuzzySet;
+    // put the auxiliary into the second
+    fuzzySetB->fuzzySet = aux;
+    return true;
+}
+
+// Method to rebuild some point, the new point is calculated finding the intersection between two lines
+bool FuzzyOutput::rebuild(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4, float *point, float *pertinence)
+{
+    // help variables
+    float denom, numera, numerb;
+    float mua, mub;
+    // calculate the denominator and numerator
+    denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+    numera = (x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3);
+    numerb = (x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3);
+    // if negative, convert to positive
+    if (denom < 0.0)
+    {
+        denom *= -1.0;
+    }
+    // If the denominator is zero or close to it, it means that the lines are parallels, so return false for intersection
+    if (denom < EPSILON_VALUE)
+    {
+        // return false for intersection
+        return false;
+    }
+    // if negative, convert to positive
+    if (numera < 0.0)
+    {
+        numera *= -1.0;
+    }
+    // if negative, convert to positive
+    if (numerb < 0.0)
+    {
+        numerb *= -1.0;
+    }
+    // verify if has intersection between the segments
+    mua = numera / denom;
+    mub = numerb / denom;
+    if (mua < 0.0 || mua > 1.0 || mub < 0.0 || mub > 1.0)
+    {
+        // return false for intersection
+        return false;
+    }
+    else
+    {
+        // calculate and setting the new point and pertinence
+        *point = x1 + mua * (x2 - x1);
+        *pertinence = y1 + mua * (y2 - y1);
+        // return true for intersection
+        return true;
+    }
+}
+
+/******************************************************************************
+
+                              Online C++ Compiler.
+               Code, Compile, Run and Debug C++ program online.
+Write your code in this editor and press "Run" button to compile and execute it.
+
+*******************************************************************************/
+
+#include <iostream>
+
+using namespace std;
+
+int main()
+{
+    cout<<"Hello World"<<"\n";;
+    
+    FuzzyOutput *fuzzyOutput = new FuzzyOutput(1);
+
+
+    FuzzySet *fuzzySetTest1 = new FuzzySet(0, 10, 10, 20);
+    fuzzySetTest1->setPertinence(1);
+    fuzzyOutput->addFuzzySet(fuzzySetTest1);
+
+    FuzzySet *fuzzySetTest2 = new FuzzySet(10, 20, 20, 30);
+    fuzzySetTest2->setPertinence(1);
+    fuzzyOutput->addFuzzySet(fuzzySetTest2);
+
+    FuzzySet *fuzzySetTest3 = new FuzzySet(20, 30, 30, 40);
+    fuzzySetTest3->setPertinence(1);
+    fuzzyOutput->addFuzzySet(fuzzySetTest3);
+
+    fuzzyOutput->truncate();
+
+    FuzzyComposition *fuzzyComposition = fuzzyOutput->getFuzzyComposition();
+
+   
+    fuzzyComposition->countPoints();
+    
+    cout<<"countPoints:"<<fuzzyComposition->countPoints()<<"\n";
+
+    return 0;
+}

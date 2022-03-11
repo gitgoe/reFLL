@@ -5,7 +5,7 @@
 
     use iterslide::SlideIterator;
 
-    use itertools::Itertools; // 0.9.0
+    use itertools::Itertools; 
 
     use std::fmt;
 
@@ -151,6 +151,12 @@
             let y3 = b_segment_begin.pertinence;
             let x4 = b_segment_end.point;
             let y4 = b_segment_end.pertinence;
+
+            println!(" x1:{}  y1:{}",x1, y1);
+            println!(" x2:{}  y2:{}",x2, y2);
+            println!(" x3:{}  y3:{}",x3, y3);
+            println!(" x4:{}  y4:{}",x4, y4);
+            println!("==========================");
 
             // calculate the denominator and numerator
             let mut denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
