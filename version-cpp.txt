@@ -467,6 +467,7 @@ public:
   float calculate();
   bool empty();
   int countPoints();
+  int dump();
 
 private:
   // PRIVATE VARIABLES
@@ -570,17 +571,36 @@ bool FuzzyComposition::build()
 {
     // auxiliary variable to handle the operation, instantiate with the first element from array
     pointsArray *aux = this->points;
+     // while not in the end of the array, iterate
+     /*
+    while (aux != NULL){
+        pointsArray *temp = aux;
+        float x1 = temp->point;
+        float y1 = temp->pertinence;
+        std::cout<<"FuzzyComposition Before build  x1: "<<x1<<"   y1: "<<y1<<"\n";
+        aux = aux->next;
+    }
+    */
     // while not in the end of the array, iterate
     while (aux != NULL)
     {
         // another auxiliary variable to handle the operation
         pointsArray *temp = aux;
+        
+        float x1 = temp->point;
+        float y1 = temp->pertinence;
+ 
+        std::cout<<"FuzzyComposition::build  x1: "<<x1<<"   y1: "<<y1<<"\n";
         // while not in the beginning of the array, iterate
         while (temp->previous != NULL)
         {
             // if the previous point is greater then the current
             if (aux->point < temp->point)
             {
+                float x1 = temp->point;
+                float y1 = temp->pertinence;
+                
+                std::cout<<"FuzzyComposition found previous point is greater then the current  x1: "<<x1<<"   y1: "<<y1<<"\n";
                 // if yes, break an use this point
                 break;
             }
@@ -589,6 +609,23 @@ bool FuzzyComposition::build()
         // iterate over the previous pointsArray
         while (temp->previous != NULL)
         {
+            /*
+            float x1 = temp->point;
+            float y1 = temp->pertinence;
+            
+            std::cout<<"FuzzyComposition iterate over the previous pointsArray temp x1: "<<x1<<"   y1: "<<y1<<"\n";
+            
+            float x2 = aux->point;
+            float y2 = aux->pertinence;
+            
+            std::cout<<"FuzzyComposition iterate over the previous pointsArray aux x2: "<<x2<<"   y2: "<<y2<<"\n";
+            
+            pointsArray *auxnext = aux->next; 
+            float x3 = auxnext->point;
+            float y3 = auxnext->pertinence;
+            
+            std::cout<<"FuzzyComposition iterate over the previous pointsArray aux x3: "<<x3<<"   y3: "<<y3<<"\n";
+            */
             // if previous of previous point is not NULL, and some intersection was fixed by rebuild
             if (this->rebuild(aux, aux->next, temp, temp->previous) == true)
             {
@@ -700,6 +737,23 @@ int FuzzyComposition::countPoints()
     return count;
 }
 
+int FuzzyComposition::dump()
+{
+    // variable to hold the count
+    int count = 0;
+    // auxiliary variable to handle the operation
+    pointsArray *aux = this->points;
+    // while not in the end of the array, iterate
+    while (aux != NULL)
+    {
+        float x1 = aux->point;
+        float y1 = aux->pertinence;
+        std::cout<<"FuzzyComposition dump  x1: "<<x1<<"   y1: "<<y1<<"\n";
+        aux = aux->next;
+    }
+    return count;
+}
+
 // PRIVATE METHODS
 
 // Method to recursively clean all pointsArray structs from memory
@@ -726,10 +780,10 @@ bool FuzzyComposition::rebuild(pointsArray *aSegmentBegin, pointsArray *aSegment
     float x4 = bSegmentEnd->point;
     float y4 = bSegmentEnd->pertinence;
     
-    std::cout<<"x1: "<<x1<<"   y1: "<<y1<<"\n";
-    std::cout<<"x2: "<<x2<<"   y2: "<<y2<<"\n";
-    std::cout<<"x3: "<<x3<<"   y3: "<<y3<<"\n";
-    std::cout<<"x4: "<<x4<<"   y4: "<<y4<<"\n";
+    std::cout<<"FC rebuild  x1: "<<x1<<"   y1: "<<y1<<"\n";
+    std::cout<<"FC rebuild  x2: "<<x2<<"   y2: "<<y2<<"\n";
+    std::cout<<"FC rebuild  x3: "<<x3<<"   y3: "<<y3<<"\n";
+    std::cout<<"FC rebuild  x4: "<<x4<<"   y4: "<<y4<<"\n";
     std::cout<<"==================================="<<"\n";
     
     // calculate the denominator and numerator
@@ -1147,7 +1201,7 @@ int main()
 
     FuzzyComposition *fuzzyComposition = fuzzyOutput->getFuzzyComposition();
 
-   
+    fuzzyComposition->dump();
     fuzzyComposition->countPoints();
     
     cout<<"countPoints:"<<fuzzyComposition->countPoints()<<"\n";

@@ -88,12 +88,12 @@
                             // search the rigth windows that contains the previeus at index 1 to get the 4 tuple<_,_,_,_>
                             for window in self.points.clone().into_iter().slide(4) { 
                             // println!(" windows: {:?}", window); 
-                                if previous.as_ref() == window.get(1) {
+                                if previous.as_ref() == window.get(0) {
                                     println!("==>> found point on windows: {:?}", window);
-                                    let a_segment_begin = *window.get(0).unwrap();
-                                    let a_segment_end = *window.get(1).unwrap();
-                                    let b_segment_begin = *window.get(2).unwrap();
-                                    let b_segment_end = *window.get(3).unwrap();
+                                    let a_segment_begin = *window.get(2).unwrap();
+                                    let a_segment_end = *window.get(3).unwrap();
+                                    let b_segment_begin = *window.get(1).unwrap();
+                                    let b_segment_end = *window.get(0).unwrap();
                                     // insert the fixed point
                                     if let Some(fixed_point) = self.rebuild(a_segment_begin, a_segment_end, b_segment_begin, b_segment_end){
                                         // insert new point
@@ -152,10 +152,10 @@
             let x4 = b_segment_end.point;
             let y4 = b_segment_end.pertinence;
 
-            println!(" x1:{}  y1:{}",x1, y1);
-            println!(" x2:{}  y2:{}",x2, y2);
-            println!(" x3:{}  y3:{}",x3, y3);
-            println!(" x4:{}  y4:{}",x4, y4);
+            println!("rebuild x1:{}  y1:{}",x1, y1);
+            println!("rebuild x2:{}  y2:{}",x2, y2);
+            println!("rebuild x3:{}  y3:{}",x3, y3);
+            println!("rebuild x4:{}  y4:{}",x4, y4);
             println!("==========================");
 
             // calculate the denominator and numerator
