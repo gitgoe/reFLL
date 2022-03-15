@@ -88,18 +88,20 @@
                             // search the rigth windows that contains the previeus at index 1 to get the 4 tuple<_,_,_,_>
                             for window in self.points.clone().into_iter().slide(4) { 
                             // println!(" windows: {:?}", window); 
-                                if previous.as_ref() == window.get(0) {
+                                if previous.as_ref() == window.get(2) {
                                     println!("==>> found point on windows: {:?}", window);
-                                    let a_segment_begin = *window.get(2).unwrap();
-                                    let a_segment_end = *window.get(3).unwrap();
-                                    let b_segment_begin = *window.get(1).unwrap();
-                                    let b_segment_end = *window.get(0).unwrap();
+                                    let a_segment_begin = *window.get(0).unwrap();
+                                    let a_segment_end = *window.get(1).unwrap();
+                                    let b_segment_begin = *window.get(2).unwrap();
+                                    let b_segment_end = *window.get(3).unwrap();
                                     // insert the fixed point
                                     if let Some(fixed_point) = self.rebuild(a_segment_begin, a_segment_end, b_segment_begin, b_segment_end){
                                         // insert new point
                                         //println!("add new point: {:?}", fixed_point);
                                         self.points.insert(index,fixed_point);
                                         // delete current et previus pointsArray
+                                        println!("add new point to remove: {:?}", a_segment_end);
+                                        println!("add new point to remove: {:?}", b_segment_begin);
                                         clean_on_exit.push(a_segment_end);
                                         clean_on_exit.push(b_segment_begin);
                                         break;
@@ -282,6 +284,34 @@
             }
 
         }
+
+        pub fn build2(&mut self) -> bool{
+            let mut previous: Option<PointArray> = None;
+            let mut is_greater = false;
+            println!("====================================================");
+            println!("==   BUILD2    nbr_of_points: {}", self.points.len());
+            println!("====================================================");
+            for (pos, current) in self.points.iter().enumerate() {
+                println!("Element at position {}: {:?}", pos, current);
+                match previous {
+                    Some(p) => {
+                        // check if the previous point is greater then the current
+                        is_greater = p.is_previous_greater(&current);
+                        // if yes, use this point
+                        if is_greater {
+                         println!("previus {:?} is greater then the current {:?} at index: {}", p, current,pos);
+                         for window in self.points.iter().slide(4) { 
+                            println!(" windows: {:?}", window); 
+                         }
+                        }
+                    }
+                    None => {}
+                }
+                previous = Some(*current);
+            }
+
+            return true;
+        }
     }
 
 
@@ -289,6 +319,29 @@
 mod tests {
     // Note this useful idiom: importing names from outer (for mod tests) scope.
     use super::*;
+
+    #[test]
+    pub fn test_build3() {
+        let mut fuzzy_composition:FuzzyComposition =  FuzzyComposition::new();
+
+        fuzzy_composition.add_point( 0.0  , 0.0);
+        fuzzy_composition.add_point( 10.0 , 1.0);
+        fuzzy_composition.add_point( 20.0 , 0.0);
+        fuzzy_composition.add_point( 20.0 , 0.0);
+        fuzzy_composition.add_point( 10.0 , 0.0);
+        fuzzy_composition.add_point( 20.0 , 1.0);
+        fuzzy_composition.add_point( 30.0 , 0.0);
+        fuzzy_composition.add_point( 30.0 , 0.0);
+        fuzzy_composition.add_point( 20.0 , 0.0);
+        fuzzy_composition.add_point( 30.0 , 1.0);
+        fuzzy_composition.add_point( 40.0 , 0.0);
+        fuzzy_composition.add_point( 40.0 , 0.0);
+
+        assert_eq!(fuzzy_composition.count_points(), 12);
+        assert_eq!(fuzzy_composition.build2(), true);
+        assert_eq!(fuzzy_composition.count_points(), 12);
+
+    }
 
     #[test]
     pub fn test_new() {
@@ -306,6 +359,7 @@ mod tests {
         assert_eq!(fuzzy_composition.check_point(5.0, 0.1), false);
 
     }
+    
 
     #[test]
     pub fn test_build() {
@@ -410,4 +464,6 @@ mod tests {
         assert_eq!(fuzzy_composition.calculate(), 20.0);
         assert_eq!(fuzzy_composition.empty(), true);
     }
+
+    
 }

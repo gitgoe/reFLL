@@ -590,17 +590,24 @@ bool FuzzyComposition::build()
         float x1 = temp->point;
         float y1 = temp->pertinence;
  
-        std::cout<<"FuzzyComposition::build  x1: "<<x1<<"   y1: "<<y1<<"\n";
+        std::cout<<"FC build  point: "<<x1<<"   pertinence: "<<y1<<"\n";
         // while not in the beginning of the array, iterate
         while (temp->previous != NULL)
         {
+          //   float x1 = temp->point;
+          //  float y1 = temp->pertinence;
+ 
+           // std::cout<<"FC build previous point: "<<x1<<"   pertinence: "<<y1<<"\n";
             // if the previous point is greater then the current
             if (aux->point < temp->point)
             {
-                float x1 = temp->point;
-                float y1 = temp->pertinence;
+                float x1 = aux->point;
+                float y1= aux->pertinence;
                 
-                std::cout<<"FuzzyComposition found previous point is greater then the current  x1: "<<x1<<"   y1: "<<y1<<"\n";
+                float x2 = temp->point;
+                float y2 = temp->pertinence;
+                
+                std::cout<<"FuzzyComposition the previous (point:"<<x2<<" pertinence: "<<y2<<") is greater then the current  (point: "<<x1<<"   pertinence: "<<y1<<")\n";
                 // if yes, break an use this point
                 break;
             }
@@ -748,7 +755,7 @@ int FuzzyComposition::dump()
     {
         float x1 = aux->point;
         float y1 = aux->pertinence;
-        std::cout<<"FuzzyComposition dump  x1: "<<x1<<"   y1: "<<y1<<"\n";
+        std::cout<<"FuzzyComposition dump  point: "<<x1<<"   pertinence: "<<y1<<"\n";
         aux = aux->next;
     }
     return count;
@@ -849,6 +856,9 @@ bool FuzzyComposition::rebuild(pointsArray *aSegmentBegin, pointsArray *aSegment
             // hold next
             pointsArray *excl = temp->next;
             // remove it from array
+            float x1 = temp->point;
+            float y1 = temp->pertinence;
+             std::cout<<"FC rebuild  remove point: "<<x1<<"   pertinence: "<<y1<<"\n";
             this->rmvPoint(temp);
             // set new current
             temp = excl;
