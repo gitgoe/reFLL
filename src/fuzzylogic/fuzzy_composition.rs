@@ -90,10 +90,10 @@
                             // println!(" windows: {:?}", window); 
                                 if previous.as_ref() == window.get(2) {
                                     println!("==>> found point on windows: {:?}", window);
-                                    let a_segment_begin = *window.get(0).unwrap();
-                                    let a_segment_end = *window.get(1).unwrap();
-                                    let b_segment_begin = *window.get(2).unwrap();
-                                    let b_segment_end = *window.get(3).unwrap();
+                                    let a_segment_begin = *window.get(2).unwrap();
+                                    let a_segment_end = *window.get(3).unwrap();
+                                    let b_segment_begin = *window.get(1).unwrap();
+                                    let b_segment_end = *window.get(0).unwrap();
                                     // insert the fixed point
                                     if let Some(fixed_point) = self.rebuild(a_segment_begin, a_segment_end, b_segment_begin, b_segment_end){
                                         // insert new point
@@ -285,7 +285,8 @@
 
         }
 
-        pub fn build2(&mut self) -> bool{
+        pub fn 
+        build2(&mut self) -> bool{
             let mut previous: Option<PointArray> = None;
             let mut is_greater = false;
             println!("====================================================");
@@ -300,8 +301,10 @@
                         // if yes, use this point
                         if is_greater {
                          println!("previus {:?} is greater then the current {:?} at index: {}", p, current,pos);
-                         for window in self.points.iter().slide(4) { 
-                            println!(" windows: {:?}", window); 
+                         for window in self.points.iter().slide(4) {                          
+                            if previous.as_ref() == *window.get(2) {
+                                println!(" windows: {:?}", window); 
+                            }
                          }
                         }
                     }
