@@ -197,7 +197,7 @@
 
             println!("before build fuzzyComposition.len: {:?}", self.fuzzyComposition.count_points());
             // call build from FuzzyComposition for its self building
-            self.fuzzyComposition.build();
+            self.fuzzyComposition.build3();
             println!("after build fuzzyComposition.len: {:?}", self.fuzzyComposition.count_points());
 
             return true;
@@ -268,13 +268,25 @@ mod tests {
         
         assert_eq!(fuzzy_output.add_fuzzyset(fuzzy_set3), 3);
 
-        fuzzy_output.truncate();
-
-        //assert_eq!(fuzzy_output.truncate(), true);
+        assert_eq!(fuzzy_output.truncate(), true);
 
         let fuzzy_composition = fuzzy_output.get_fuzzy_composition();
 
-        assert_eq!(fuzzy_composition.count_points(), 12); // --> a corriger
+        assert_eq!(fuzzy_composition.count_points(), 8);
+
+        assert_eq!(fuzzy_composition.check_point(0.0, 0.0), true);
+        assert_eq!(fuzzy_composition.check_point(10.0, 1.0), true);
+        assert_eq!(fuzzy_composition.check_point(20.0, 0.0), false);
+        assert_eq!(fuzzy_composition.check_point(15.0, 0.5), true);
+        assert_eq!(fuzzy_composition.check_point(10.0, 0.0), false);
+        assert_eq!(fuzzy_composition.check_point(20.0, 1.0), true);
+        assert_eq!(fuzzy_composition.check_point(25.0, 0.5), true);
+        assert_eq!(fuzzy_composition.check_point(30.0, 0.0), false);
+        assert_eq!(fuzzy_composition.check_point(20.0, 0.0), false);
+        assert_eq!(fuzzy_composition.check_point(30.0, 1.0), true);
+        assert_eq!(fuzzy_composition.check_point(40.0, 0.0), true);
+
+        assert_eq!(fuzzy_output.get_crisp_output(), 20.0);
 
     }
 
