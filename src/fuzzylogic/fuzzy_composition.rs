@@ -70,7 +70,7 @@
         }
 
         // Method to iterate over the pointsArray, detect possible intersections and sent these points for "correction"
-        pub fn build(&mut self) -> bool{
+        pub fn buildX(&mut self) -> bool{
             let mut clean_on_exit : Vec<PointArray> = vec![];
             let mut previous: Option<PointArray> = None;
             let mut is_greater = false;
@@ -336,7 +336,7 @@
 
                                  // insert new point
                                  println!("add new point: {:?}", fixed_point);
-                                 self.points.insert(pos-2,fixed_point);
+                                 self.points.insert(pos-3,fixed_point);
                                 break;   
                             }
                             
@@ -391,23 +391,23 @@
                             
                             let a_segment_begin = self.points[pos];
                             let a_segment_end = self.points[pos+1];
-                            let b_segment_begin = self.points[pos-2];
-                            let b_segment_end = self.points[pos-1];
+                            let b_segment_begin = self.points[pos-1];
+                            let b_segment_end = self.points[pos-2];
 
                             // insert the fixed point
                             if let Some(fixed_point) = self.rebuild(a_segment_begin, a_segment_end, b_segment_begin, b_segment_end){
                                
                                 // delete current et previus pointsArray
-                                println!("remove: {:?}", a_segment_begin);
-                                println!("remove: {:?}", b_segment_begin);
-                                println!("remove previus: {:?}", p);
+                                println!("1# remove: {:?}", a_segment_begin);
+                                println!("1# remove: {:?}", b_segment_begin);
+                                //println!("1# remove previus: {:?}", p);
                                 self.rmv_point(a_segment_begin);
                                 self.rmv_point(b_segment_begin);
-                                self.rmv_point(p);
+                                //self.rmv_point(p);
 
                                  // insert new point
                                  println!("add new point: {:?}", fixed_point);
-                                 self.points.insert(pos-2,fixed_point);
+                                 self.points.insert(pos-1,fixed_point);
                                 break;   
                             }
                         
@@ -420,9 +420,9 @@
                             if let Some(fixed_point) = self.rebuild(a_segment_begin, a_segment_end, b_segment_begin, b_segment_end){
                                
                                 // delete current et previus pointsArray
-                                println!("remove previus: {:?}", p);
-                                println!("remove: {:?}", b_segment_begin);
-                                println!("remove: {:?}", a_segment_begin);
+                                println!("2# remove: {:?}", b_segment_begin);
+                                println!("2# remove: {:?}", a_segment_begin);
+                                println!("2# remove previus: {:?}", p);
                                 self.rmv_point(a_segment_begin);
                                 self.rmv_point(b_segment_begin);
                                 self.rmv_point(p);
@@ -615,31 +615,17 @@ mod tests {
         fuzzy_composition.add_point(40.0, 0.0);
 
         assert_eq!(fuzzy_composition.build3(), true);
-        assert_eq!(fuzzy_composition.count_points(), 8);
+
+        assert_eq!(fuzzy_composition.check_point(10.0, 1.0), true);
+        assert_eq!(fuzzy_composition.check_point(15.0, 0.5), true);
+        assert_eq!(fuzzy_composition.check_point(20.0, 1.0), true);
+        assert_eq!(fuzzy_composition.check_point(25.0, 0.5), true);
+        assert_eq!(fuzzy_composition.check_point(30.0, 1.0), true);
+        assert_eq!(fuzzy_composition.check_point(40.0, 0.0), true);
+
+        assert_eq!(fuzzy_composition.count_points(), 7);
         assert_eq!(fuzzy_composition.calculate(), 20.0);
         assert_eq!(fuzzy_composition.empty(), true);
     }
-
-    #[test]
-    pub fn test_calculate1() {
-        
-        let mut fuzzy_composition:FuzzyComposition =  FuzzyComposition::new();
-        
-        fuzzy_composition.add_point(0.0, 0.0);
-        fuzzy_composition.add_point(10.0, 1.0);
-        fuzzy_composition.add_point(20.0, 0.0);
-        fuzzy_composition.add_point(10.0, 0.0);
-        fuzzy_composition.add_point(20.0, 1.0);
-        fuzzy_composition.add_point(30.0, 0.0);
-        fuzzy_composition.add_point(20.0, 0.0);
-        fuzzy_composition.add_point(30.0, 1.0);
-        fuzzy_composition.add_point(40.0, 0.0);
-
-        assert_eq!(fuzzy_composition.build3(), true);
-        assert_eq!(fuzzy_composition.count_points(), 8);
-        //assert_eq!(fuzzy_composition.calculate(), 20.0);
-        //assert_eq!(fuzzy_composition.empty(), true);
-    }
-
-    
+ 
 }
