@@ -197,7 +197,7 @@
 
             println!("before build fuzzyComposition.len: {:?}", self.fuzzyComposition.count_points());
             // call build from FuzzyComposition for its self building
-            self.fuzzyComposition.build3();
+            self.fuzzyComposition.build();
             println!("after build fuzzyComposition.len: {:?}", self.fuzzyComposition.count_points());
 
             return true;

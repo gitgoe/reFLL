@@ -69,84 +69,7 @@
             self.points.contains(&PointArray{point, pertinence, uuid})
         }
 
-        // Method to iterate over the pointsArray, detect possible intersections and sent these points for "correction"
-        pub fn buildX(&mut self) -> bool{
-            let mut clean_on_exit : Vec<PointArray> = vec![];
-            let mut previous: Option<PointArray> = None;
-            let mut is_greater = false;
-            println!("====================================================");
-            println!("==   BUILD    nbr_of_points: {}", self.points.len());
-            println!("====================================================");
-            for current in self.points.clone().into_iter() {
-                println!("{:?} ", current);
-                match previous {
-                    Some(p) => {
-                        // if the previous point is greater then the current
-                        is_greater = p.is_previous_greater(&current);
-                        // if yes, break an use this point
-                        if is_greater {
-                        // println!("previus {:?} is greater then {:?}", p, current);
-                        // find the index of the previus
-                            let index = self.points.iter().position(|&r| r == previous.unwrap()).unwrap();
-
-                            println!("found greater {:?} at index [{:?}] points.len():{:?}", previous, index, self.points.clone().len());
-
-                            // search the rigth windows that contains the previeus at index 1 to get the 4 tuple<_,_,_,_>
-                            for window in self.points.clone().into_iter().slide(4) { 
-                            // println!(" windows: {:?}", window); 
-                                if previous.as_ref() == window.get(2) {
-                                    println!("==>> found point on windows: {:?}", window);
-                                    let a_segment_begin = *window.get(2).unwrap();
-                                    let a_segment_end = *window.get(3).unwrap();
-                                    let b_segment_begin = *window.get(1).unwrap();
-                                    let b_segment_end = *window.get(0).unwrap();
-                                    // insert the fixed point
-                                    if let Some(fixed_point) = self.rebuild(a_segment_begin, a_segment_end, b_segment_begin, b_segment_end){
-                                        // insert new point
-                                        //println!("add new point: {:?}", fixed_point);
-                                        self.points.insert(index,fixed_point);
-                                        // delete current et previus pointsArray
-                                        println!("add new point to remove: {:?}", a_segment_end);
-                                        println!("add new point to remove: {:?}", b_segment_begin);
-                                        clean_on_exit.push(a_segment_end);
-                                        clean_on_exit.push(b_segment_begin);
-                                        break;
-                                    }
-
-                                }       
-                            } // end window
-                            
-                        } 
-                    }
-                    None => {}
-                }
-                previous = Some(current);
-            }
         
-            println!("=== Remove invalid points =============");
-
-            for current in clean_on_exit.iter() {
-                println!("clean_on_exit: {:?}", current);
-                self.rmv_point(*current);
-            }
-
-            println!("==== ==================================");
-
-            for current in self.points.iter() {
-                println!("remain: {:?}", current);
-            }
-
-            println!("==== ==================================");
-
-            self.points.sort_by(|a,b| a.point.partial_cmp(&b.point).unwrap());
-
-            for current in self.points.iter() {
-                println!("sorted: {:?}", current);
-            }
-
-            true
-        }
-
         // Method to search intersection between two segments, if found, create a new pointsArray (in found intersection) and remove not necessary ones
         pub fn rebuild(&self,  a_segment_begin: PointArray, a_segment_end: PointArray, b_segment_begin: PointArray, b_segment_end: PointArray) -> Option<PointArray>{
             
@@ -299,82 +222,8 @@
             }   
         }
 
-        pub fn build2(&mut self) -> bool{
-           
-            let mut previous: Option<PointArray> = None;
-            let mut is_greater = false;
-            println!("====================================================");
-            println!("==   BUILD2    nbr_of_points: {}", self.points.len());
-            println!("====================================================");
-            for (pos, current) in self.points.iter().enumerate() {
-                println!("Element at position {}: {:?}", pos, current);
-                match previous {
-                    Some(p) => {
-                        // check if the previous point is greater then the current
-                        is_greater = p.is_previous_greater(&current);
-                       
-                        // if yes, use this point
-                        if is_greater {
-                            
-                            println!("previus {:?} is greater then the current {:?} at index: {}", p, current,pos); 
-                            let a_segment_begin = self.points[pos];
-                            let a_segment_end = self.points[pos+1];
-                            let b_segment_begin = self.points[pos-2];
-                            let b_segment_end = self.points[pos-1];
-
-                           
-                            // insert the fixed point
-                            if let Some(fixed_point) = self.rebuild(a_segment_begin, a_segment_end, b_segment_begin, b_segment_end){
-                               
-                                // delete current et previus pointsArray
-                                println!("remove: {:?}", a_segment_begin);
-                                println!("remove: {:?}", b_segment_begin);
-                                println!("remove previus: {:?}", p);
-                                self.rmv_point(a_segment_begin);
-                                self.rmv_point(b_segment_begin);
-                                self.rmv_point(p);
-
-                                 // insert new point
-                                 println!("add new point: {:?}", fixed_point);
-                                 self.points.insert(pos-3,fixed_point);
-                                break;   
-                            }
-                            
-                            let a_segment_begin = self.points[pos];
-                            let a_segment_end = self.points[pos+1];
-                            let b_segment_begin = self.points[pos-2];
-                            let b_segment_end = self.points[pos-3];
-
-                               // insert the fixed point
-                            if let Some(fixed_point) = self.rebuild(a_segment_begin, a_segment_end, b_segment_begin, b_segment_end){
-                               
-                                // delete current et previus pointsArray
-                                println!("remove previus: {:?}", p);
-                                println!("remove: {:?}", b_segment_begin);
-                                println!("remove: {:?}", a_segment_begin);
-                                self.rmv_point(a_segment_begin);
-                                self.rmv_point(b_segment_begin);
-                                self.rmv_point(p);
-                        
-                                 // insert new point
-                                println!("add new point: {:?}", fixed_point);
-                                self.points.insert(pos-2,fixed_point);
-                                break; 
-                            }
-                         
-                        }
-                    }
-                    None => {}
-                }
-                previous = Some(*current);
-            }
-
-            self.dump_points();
-
-            return true;
-        }
-
-        pub fn build3(&mut self) -> bool{
+        // Method to iterate over the pointsArray, detect possible intersections and sent these points for "correction"
+        pub fn build(&mut self) -> bool{
             let mut previous: Option<PointArray> = None;
             let mut is_greater = false;
             let mut pos = 0;
@@ -400,15 +249,13 @@
                                 // delete current et previus pointsArray
                                 println!("1# remove: {:?}", a_segment_begin);
                                 println!("1# remove: {:?}", b_segment_begin);
-                                //println!("1# remove previus: {:?}", p);
                                 self.rmv_point(a_segment_begin);
                                 self.rmv_point(b_segment_begin);
-                                //self.rmv_point(p);
-
+                               
                                  // insert new point
                                  println!("add new point: {:?}", fixed_point);
                                  self.points.insert(pos-1,fixed_point);
-                                break;   
+                                 break;   
                             }
                         
                             let a_segment_begin = self.points[pos];
@@ -430,7 +277,6 @@
                                  // insert new point
                                 println!("add new point: {:?}", fixed_point);
                                 self.points.insert(pos-2,fixed_point);
-                                // return to zero or
                                 break;
                             }
                         }
@@ -441,8 +287,9 @@
                 pos+=1;
                 println!("index={} {:?}",pos, current);
             }
+             // return to zero and build again until the end
             if pos < self.points.len() {
-                self.build3();
+                self.build();
             } 
            
             return true;
@@ -473,7 +320,7 @@ mod tests {
         fuzzy_composition.add_point( 40.0 , 0.0);
         fuzzy_composition.add_point( 40.0 , 0.0);
 
-        assert_eq!(fuzzy_composition.build3(), true);
+        assert_eq!(fuzzy_composition.build(), true);
     }
     #[test]
     pub fn test_build3() {
@@ -493,7 +340,7 @@ mod tests {
         fuzzy_composition.add_point( 40.0 , 0.0);
 
         assert_eq!(fuzzy_composition.count_points(), 12);
-        assert_eq!(fuzzy_composition.build3(), true);    
+        assert_eq!(fuzzy_composition.build(), true);    
         assert_eq!(fuzzy_composition.count_points(), 8);
        
     }
@@ -528,7 +375,7 @@ mod tests {
         fuzzy_composition.add_point(20.0, 1.0);
         fuzzy_composition.add_point(30.0, 0.0);
 
-        assert_eq!(fuzzy_composition.build3(), true);
+        assert_eq!(fuzzy_composition.build(), true);
         
         assert_eq!(fuzzy_composition.check_point(0.0, 0.0), true);
         assert_eq!(fuzzy_composition.check_point(10.0, 1.0), true);
@@ -554,7 +401,7 @@ mod tests {
         fuzzy_composition.add_point(30.0, 1.0);
         fuzzy_composition.add_point(40.0, 0.0);
 
-        assert_eq!(fuzzy_composition.build3(), true);
+        assert_eq!(fuzzy_composition.build(), true);
         
         assert_eq!(fuzzy_composition.check_point(0.0, 0.0), true);
         assert_eq!(fuzzy_composition.check_point(10.0, 1.0), true);
@@ -580,7 +427,7 @@ mod tests {
         fuzzy_composition.add_point(25.0, 1.0);
         fuzzy_composition.add_point(25.0, 0.0);
 
-        assert_eq!(fuzzy_composition.build3(), true);
+        assert_eq!(fuzzy_composition.build(), true);
         assert_eq!(fuzzy_composition.count_points(), 3);
         assert_eq!(fuzzy_composition.calculate(), 25.0);
         assert_eq!(fuzzy_composition.empty(), true);
@@ -589,7 +436,7 @@ mod tests {
         fuzzy_composition.add_point(20.0, 1.0);
         fuzzy_composition.add_point(30.0, 0.0);
 
-        assert_eq!(fuzzy_composition.build3(), true);
+        assert_eq!(fuzzy_composition.build(), true);
         assert_eq!(fuzzy_composition.count_points(), 3);
         assert_eq!(fuzzy_composition.calculate(), 20.0);
         assert_eq!(fuzzy_composition.empty(), true);
@@ -599,7 +446,7 @@ mod tests {
         fuzzy_composition.add_point(50.0, 1.0);
         fuzzy_composition.add_point(60.0, 0.0);
 
-        assert_eq!(fuzzy_composition.build3(), true);
+        assert_eq!(fuzzy_composition.build(), true);
         assert_eq!(fuzzy_composition.count_points(), 4);
         assert_eq!(fuzzy_composition.calculate(), 40.0);
         assert_eq!(fuzzy_composition.empty(), true);
@@ -614,7 +461,7 @@ mod tests {
         fuzzy_composition.add_point(30.0, 1.0);
         fuzzy_composition.add_point(40.0, 0.0);
 
-        assert_eq!(fuzzy_composition.build3(), true);
+        assert_eq!(fuzzy_composition.build(), true);
 
         assert_eq!(fuzzy_composition.check_point(10.0, 1.0), true);
         assert_eq!(fuzzy_composition.check_point(15.0, 0.5), true);
