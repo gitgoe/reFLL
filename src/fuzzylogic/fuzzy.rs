@@ -222,7 +222,7 @@ mod tests {
     }
 
     #[test]
-    fn test_set_input_And_Fuzzify_and_is_firedrule_And_defuzzify() {
+    fn test_setinput_and_fuzzify_and_isfiredrule_and_defuzzify() {
 
       let mut fuzzy = Fuzzy::new();
 
@@ -255,37 +255,37 @@ mod tests {
       fuzzy.add_fuzzyoutput(climate);
 
       // Building FuzzyRule
-      let mut ifTemperatureLow = FuzzyRuleAntecedent::new();
-      ifTemperatureLow.join_single(Some(low));
+      let mut if_temperature_low = FuzzyRuleAntecedent::new();
+      if_temperature_low.join_single(Some(low));
 
-      let mut thenClimateCold:FuzzyRuleConsequent =  FuzzyRuleConsequent::new();
-      thenClimateCold.add_output(cold);
+      let mut then_climate_cold:FuzzyRuleConsequent =  FuzzyRuleConsequent::new();
+      then_climate_cold.add_output(cold);
 
-      let mut fuzzy_rule1 = FuzzyRule::new(1,Some(ifTemperatureLow), Some(thenClimateCold));
+      let  fuzzyrule1 = FuzzyRule::new(1,Some(if_temperature_low), Some(then_climate_cold));
           
-      fuzzy.add_fuzzyrule(fuzzy_rule1);
+      fuzzy.add_fuzzyrule(fuzzyrule1);
 
       // Building FuzzyRule
-      let mut ifTemperatureMean = FuzzyRuleAntecedent::new();
-      ifTemperatureMean.join_single(Some(mean));
+      let mut if_temperature_mean = FuzzyRuleAntecedent::new();
+      if_temperature_mean.join_single(Some(mean));
 
-      let mut thenClimateGood:FuzzyRuleConsequent =  FuzzyRuleConsequent::new();
-      thenClimateGood.add_output(good);
+      let mut then_climate_good:FuzzyRuleConsequent =  FuzzyRuleConsequent::new();
+      then_climate_good.add_output(good);
 
-      let mut fuzzy_rule2 = FuzzyRule::new(2,Some(ifTemperatureMean), Some(thenClimateGood));
+      let fuzzyrule2 = FuzzyRule::new(2,Some(if_temperature_mean), Some(then_climate_good));
           
-      fuzzy.add_fuzzyrule(fuzzy_rule2);
+      fuzzy.add_fuzzyrule(fuzzyrule2);
 
       // Building FuzzyRule
-      let mut ifTemperatureHigh = FuzzyRuleAntecedent::new();
-      ifTemperatureHigh.join_single(Some(high));
+      let mut if_temperature_high = FuzzyRuleAntecedent::new();
+      if_temperature_high.join_single(Some(high));
 
-      let mut thenClimateHot:FuzzyRuleConsequent =  FuzzyRuleConsequent::new();
-      thenClimateHot.add_output(cold);
+      let mut then_climate_hot:FuzzyRuleConsequent =  FuzzyRuleConsequent::new();
+      then_climate_hot.add_output(cold);
 
-      let mut fuzzy_rule3 = FuzzyRule::new(3,Some(ifTemperatureHigh), Some(thenClimateHot));
+      let fuzzyrule3 = FuzzyRule::new(3,Some(if_temperature_high), Some(then_climate_hot));
           
-      assert_eq!(fuzzy.add_fuzzyrule(fuzzy_rule3), 3);
+      assert_eq!(fuzzy.add_fuzzyrule(fuzzyrule3), 3);
 
       assert_eq!(fuzzy.set_input(1, 15.0), true);
 

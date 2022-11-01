@@ -3,7 +3,6 @@
 
     extern crate itertools;
 
-    use iterslide::SlideIterator;
 
     use itertools::Itertools; 
 
