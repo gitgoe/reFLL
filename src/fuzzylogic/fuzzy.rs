@@ -2,8 +2,11 @@
   use crate::fuzzylogic::fuzzy_input::FuzzyInput;
   use crate::fuzzylogic::fuzzy_output::FuzzyOutput;
   use crate::fuzzylogic::fuzzy_rule::FuzzyRule;
+
+  #[allow(unused_imports)]
+  use log::{info, warn, debug};
   
-  #[allow(non_snake_case)]
+  #[allow(non_snake_case, dead_code)]
   pub struct Fuzzy{
     fuzzyInputArray: Vec<FuzzyInput>,
     fuzzyOutputArray: Vec<FuzzyOutput>,
@@ -62,27 +65,27 @@
 
       // calculate the pertinence of all FuzzyInput objects
       // for each FuzzyInput, calculate its pertinence
-      self.fuzzyInputArray.iter_mut().map(|fi| fi.calculate_fuzzyset_pertinences()).collect::<Vec<_>>();
+      self.fuzzyInputArray.iter_mut().map(|fi| fi.calculate_fuzzyset_pertinences()).for_each(drop);
 
-      self.update_fuzzyRule();
+      self.update_fuzzyrule();
 
       // evaluate which rules were triggered
       // for each FuzzyRule, evaluate its expressions
-      self.fuzzyRuleArray.iter_mut().map(|fr| fr.evaluate_expression()).collect::<Vec<_>>();
+      self.fuzzyRuleArray.iter_mut().map(|fr| fr.evaluate_expression()).for_each(drop);
 
-      self.update_fuzzyOutput();
+      self.update_fuzzyoutput();
       
       // to truncate the output sets
       // for each FuzzyOutput, truncate the result
-      self.fuzzyOutputArray.iter_mut().map(|fo| fo.truncate()).collect::<Vec<_>>();
+      self.fuzzyOutputArray.iter_mut().map(|fo| fo.truncate()).for_each(drop);
 
       return true;
     }
 
-    pub fn update_fuzzyRule(&mut self){
+    pub fn update_fuzzyrule(&mut self){
       for fia in  self.fuzzyInputArray.iter() {
         for fs in fia.fuzzyIO.fuzzySetArray.iter(){
-          println!("updated_fuzzyset : {:?}", fs);
+          info!("updated_fuzzyset : {:?}", fs);
           for fr in self.fuzzyRuleArray.iter_mut(){
             fr.fuzzyRuleAntecedent.as_mut().unwrap().update_fuzzysets(Some(*fs));
           }  
@@ -90,10 +93,10 @@
       }
     }
 
-    pub fn update_fuzzyOutput(&mut self){
+    pub fn update_fuzzyoutput(&mut self){
       for fia in  self.fuzzyInputArray.iter() {
         for fs in fia.fuzzyIO.fuzzySetArray.iter(){
-          println!("updated_fuzzyset : {:?}", fs);
+          info!("updated_fuzzyset : {:?}", fs);
           for fo in self.fuzzyOutputArray.iter_mut(){
             fo.update_fuzzyset(*fs);
           }  

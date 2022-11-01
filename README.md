@@ -27,4 +27,6 @@ drop(v); // explicitly drop the vector
 
 cargo test test_build -- --nocapture
 
+https://github.com/auseckas/rsfuzzy.git
+
 

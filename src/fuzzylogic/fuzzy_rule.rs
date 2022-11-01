@@ -50,7 +50,11 @@ impl FuzzyRule {
                 self.fired = false;
             }   
             // pass the power of FuzzyRuleAntecedent to FuzzyRuleConsequent by its evaluator
-            self.fuzzyRuleConsequent.as_mut().unwrap().evaluate(power_of_antecedent);
+            //self.fuzzyRuleConsequent.as_mut().unwrap().evaluate(power_of_antecedent);
+            match self.fuzzyRuleConsequent.as_mut() {
+                Some(v) => v.evaluate(power_of_antecedent),
+                None => false,
+            };
         }
         println!("fuzzyRule:{:?}", self);
         return self.fired;

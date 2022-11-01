@@ -37,7 +37,7 @@
             f.debug_struct("point")
             .field("point", &self.point)
             .field("pertinence", &self.pertinence)
-            .field("uuid", &self.uuid.unwrap().to_urn())
+            .field("uuid", &self.uuid.unwrap().as_urn())
             .finish()
         }
     }
@@ -224,14 +224,13 @@
         // Method to iterate over the pointsArray, detect possible intersections and sent these points for "correction"
         pub fn build(&mut self) -> bool{
             let mut previous: Option<PointArray> = None;
-            let mut is_greater = false;
             let mut pos = 0;
             while pos < self.points.len(){
-                let mut current: PointArray = self.points[pos];
+                let  current: PointArray = self.points[pos];
                 match previous {
                     Some(p) => {
                         // check if the previous point is greater then the current
-                        is_greater = p.is_previous_greater(&current);
+                        let  is_greater = p.is_previous_greater(&current);
                          // if yes, use this point
                         if is_greater {
 

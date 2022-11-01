@@ -128,7 +128,7 @@ mod tests {
     } 
 
     #[test]
-    pub fn test_patialEq() {
+    pub fn test_patial_eq() {
         let mut fuzzy_set1:FuzzySet =  FuzzySet::new(0.0, 10.0, 20.0, 30.0);
         fuzzy_set1.set_pertinence(5.0);
 
