@@ -95,6 +95,12 @@ impl Subscriber for FuzzySubscriber {
     fn on_event(&mut self, event: &Event<Self::Input>) {
         println!("{} received data: {}", self.name, event.get_data());
         self.input_value = self.input_value + event.get_data();
+        if  self.input_value < self.min  {
+            self.input_value = self.min;
+        }
+        if  self.input_value >= self.max {
+            self.input_value = self.max;
+        }
         self.fuzzylogic.set_input(1, self.input_value as f32);
         self.fuzzylogic.fuzzify();
         println!("input_value: {} defuzzify value: {}", self.input_value,  self.fuzzylogic.defuzzify(1));
